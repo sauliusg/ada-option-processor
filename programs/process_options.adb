@@ -17,6 +17,13 @@ procedure Process_Options is
    --     programs/process_options.adb \
    --     -cargs -fsanitize=address -largs -fsanitize=address
    
+   String_Parameter : Option_Value_Access :=
+     new Option_Value_Type'
+     (
+      STRING_OPT,
+      String_Value => new String'("string value")
+     );
+   
    Integer_Parameter : Option_Value_Access :=
      new Option_Value_Type (INTEGER_OPT);
    
@@ -58,6 +65,7 @@ procedure Process_Options is
    Options : Option_Array :=
      (
       Help_Option ("-h", "--help", Help'Access),
+      Option ("-S", "--string",    String_Parameter),
       Option ("-1", "--one",       Set_Flag'Access, Help => "Set selection to ONE"),
       Option ("-2", "--two",       Set_Flag'Access, Help => "Set selection to TWO"),
       Option ("-3", "--tree",      Set_Flag'Access, Help => "Set selection to THREE"),
