@@ -114,7 +114,7 @@ package body Option_Processor is
    procedure Free is new Ada.Unchecked_Deallocation
      (String, Option_Value_String);
    
-   function Value_Length (Value : Option_Value_Access) return Natural is
+   function Value_Image_Length (Value : Option_Value_Access) return Natural is
    begin
       case Value.Option_Kind is
          when STRING_OPT    => return Value.String_Value.all'Length;
@@ -125,6 +125,18 @@ package body Option_Processor is
          when POSITIVE_OPT  => return Value.Positive_Value'Image'Length;
          when CHARACTER_OPT => return Value.Character_Value'Image'Length;
          when others => return 0;
+      end case;
+   end;
+   
+   function Value_Length (Value : Option_Value_Access) return Natural is
+   begin
+      case Value.Option_Kind is
+         when STRING_OPT =>
+            return Value_Image_Length (Value);
+         when others => 
+            return (if Value_Image_Length (Value) <= 2 
+                      then 0 
+                      else Value_Image_Length (Value) - 2);
       end case;
    end;
    
@@ -165,7 +177,7 @@ package body Option_Processor is
       Short_Option : String (1..3);
       Max_Value_Length : Natural := 0;
       Max_Long_Option_Length : Natural := 0;
-      Option_Start_Position : Positive := 4;
+      Option_Start_Position : Positive := 3;
       Help_Text_Position : Positive := Option_Start_Position + Short_Option'Length;
    begin
       for I in Options'Range loop
@@ -178,6 +190,7 @@ package body Option_Processor is
       end loop;
       Help_Text_Position :=
         Help_Text_Position + Max_Value_Length + Max_Long_Option_Length;
+      Put_Line ("OPTIONS:");
       for I in Options'Range loop
          Short_Option := 
            (
