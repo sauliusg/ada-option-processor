@@ -161,7 +161,7 @@ begin
       
       for F in 1 .. File_Name_Count loop
          Put (F'Image);
-         Put (ASCII.HT & Get_File_Name (F));
+         Put (ASCII.HT & Get_File_Argument_Index (F)'Image);
          if Get_File_Name (F) /= "-" then
             Put (ASCII.HT & """" & Get_File_Name (F) & """");
          else
