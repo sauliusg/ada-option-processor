@@ -17,8 +17,11 @@ procedure Process_Options is
    --     programs/process_options.adb \
    --     -cargs -fsanitize=address -largs -fsanitize=address
    
-   Integer_Parameter : Option_Value_Access := new Option_Value_Type (INTEGER_OPT);
-   Float_Parameter   : Option_Value_Access := new Option_Value_Type (FLOAT_OPT);
+   Integer_Parameter : Option_Value_Access :=
+     new Option_Value_Type (INTEGER_OPT);
+   
+   Float_Parameter   : Option_Value_Access :=
+     new Option_Value_Type'(FLOAT_OPT, Float_Value => 3.14);
    
    Boolean_Affirmative_Switch : Option_Value_Access := 
      new Option_Value_Type'(BOOLEAN_TRUE_OPT, Boolean_Value => True);
