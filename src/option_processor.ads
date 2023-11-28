@@ -15,6 +15,7 @@ package Option_Processor is
       Read_STDIN_If_No_Files : Boolean := True;
       Treat_Single_Dash_As_STDIN : Boolean := True;
       Tread_Double_Dash_As_End_Of_Options : Boolean := True;
+      Leading_Plus_Starts_Short_Option : Boolean := True;
    end record;
    
    Package_Configuration : Configuration_Type;
@@ -23,7 +24,8 @@ package Option_Processor is
      (
       Read_STDIN_If_No_Files : Boolean := True;
       Treat_Single_Dash_As_STDIN : Boolean := True;
-      Tread_Double_Dash_As_End_Of_Options : Boolean := True
+      Tread_Double_Dash_As_End_Of_Options : Boolean := True;
+      Leading_Plus_Starts_Short_Option : Boolean := True
      );
    
    -- Storage management:
@@ -79,8 +81,9 @@ package Option_Processor is
    for Option_Value_Access'Storage_Pool use Reclaiming_Pool;
    
    type Option_Type is record
+      Short_Option_Prefix : Character; -- '-' or, optionally, '+';
       Short_Option : Character;
-      Short_Option_suffix : Character; -- '+' or '-' for negation;
+      Short_Option_Suffix : Character; -- '+' or '-' for negation;
       Long_Option : String_Access;
       Option_Kind : Option_Value_Kind;
       Value : Option_Value_Access;
@@ -128,7 +131,8 @@ package Option_Processor is
       Options : in out Option_Array;
       Read_STDIN_If_No_Files : Boolean;
       Treat_Single_Dash_As_STDIN : Boolean := True;
-      Tread_Double_Dash_As_End_Of_Options : Boolean := True
+      Tread_Double_Dash_As_End_Of_Options : Boolean := True;
+      Leading_Plus_Starts_Short_Option : Boolean := True
      ) return File_Index_Array;
 
 end Option_Processor;

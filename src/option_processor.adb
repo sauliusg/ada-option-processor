@@ -9,12 +9,14 @@ package body Option_Processor is
      (
       Read_STDIN_If_No_Files : Boolean := True;
       Treat_Single_Dash_As_STDIN : Boolean := True;
-      Tread_Double_Dash_As_End_Of_Options : Boolean := True
+      Tread_Double_Dash_As_End_Of_Options : Boolean := True;
+      Leading_Plus_Starts_Short_Option : Boolean := True
      ) is
    begin
       Package_Configuration.Read_STDIN_If_No_Files := Read_STDIN_If_No_Files;
       Package_Configuration.Treat_Single_Dash_As_STDIN := Treat_Single_Dash_As_STDIN;
       Package_Configuration.Tread_Double_Dash_As_End_Of_Options := Tread_Double_Dash_As_End_Of_Options;
+      Package_Configuration.Leading_Plus_Starts_Short_Option := Leading_Plus_Starts_Short_Option;
    end;
    
    function Option
@@ -26,6 +28,9 @@ package body Option_Processor is
    begin
       return 
         (
+         (if Short_Option'Length > 0
+            then Short_Option (Short_Option'First)
+            else ' '),
          (if Short_Option'Length > 1
             then Short_Option (Short_Option'First + 1)
             else Default_Short_Option_Value),
@@ -182,7 +187,9 @@ package body Option_Processor is
       Found_Instances : Index_List_Type (1 .. Options'Length);
    begin
       
-      if Option_String (Option_String'First) = '-' and then 
+      if (Option_String (Option_String'First) = '-' or else 
+            Option_String (Option_String'First) = '+')
+        and then 
         Option_String'Length > 1 and then
         Option_String (Option_String'First + 1) /= '-'
       then
@@ -190,7 +197,8 @@ package body Option_Processor is
             declare
                Option_Letter_Idx : constant Integer := Option_String'First + 1;
             begin
-               if Option_String (Option_Letter_Idx) = Options (I).Short_Option and then
+               if Option_String (Option_String'First) = Options (I).Short_Option_Prefix and then
+                 Option_String (Option_Letter_Idx) = Options (I).Short_Option and then
                  ((Option_String'Length = 2 and then
                      Options (I).Short_Option_Suffix = Default_Short_Option_Suffix)
                   or else
@@ -247,7 +255,10 @@ package body Option_Processor is
             Option_String : String := Argument (Argument_Idx);
          begin
             if not No_More_Options and then
-              Option_String (Option_String'First) = '-' and then 
+              (Option_String (Option_String'First) = '-' or else 
+                 (Package_Configuration.Leading_Plus_Starts_Short_Option and then
+                    Option_String (Option_String'First) = '+'))
+              and then 
               Option_String'Length > 1 then
                if Package_Configuration.Tread_Double_Dash_As_End_Of_Options and then 
                  Option_String = "--" then
@@ -279,7 +290,8 @@ package body Option_Processor is
       Options : in out Option_Array;
       Read_STDIN_If_No_Files : Boolean;
       Treat_Single_Dash_As_STDIN : Boolean := True;
-      Tread_Double_Dash_As_End_Of_Options : Boolean := True
+      Tread_Double_Dash_As_End_Of_Options : Boolean := True;
+      Leading_Plus_Starts_Short_Option : Boolean := True
      ) return File_Index_Array
    is
       Old_Package_Configuration : Configuration_Type := Package_Configuration;
@@ -287,7 +299,8 @@ package body Option_Processor is
       Package_Configuration.Read_STDIN_If_No_Files := Read_STDIN_If_No_Files;
       Package_Configuration.Treat_Single_Dash_As_STDIN := Treat_Single_Dash_As_STDIN;
       Package_Configuration.Tread_Double_Dash_As_End_Of_Options := Tread_Double_Dash_As_End_Of_Options;
-      
+      Package_Configuration.Leading_Plus_Starts_Short_Option := Leading_Plus_Starts_Short_Option;
+
       declare
          File_Indices : File_Index_Array := Get_Options (Options);
       begin

@@ -72,10 +72,12 @@ procedure Process_Options is
       Option ("-q ","--positive",  BOOLEAN_TRUE_OPT,  Boolean_Negative_Switch),
       Option ("-q+","",            BOOLEAN_TRUE_OPT,  Boolean_Negative_Switch),
       Option ("-q-","--negative",  BOOLEAN_FALSE_OPT, Boolean_Negative_Switch),
+      Option ("+q", "",            BOOLEAN_FALSE_OPT, Boolean_Negative_Switch),
       
       Option ("-s" ,"--affirmative",    BOOLEAN_TRUE_OPT,  Boolean_Affirmative_Switch),
       Option ("-s+","",                 BOOLEAN_TRUE_OPT,  Boolean_Affirmative_Switch),
-      Option ("-s-","--no-affirmative", BOOLEAN_FALSE_OPT, Boolean_Affirmative_Switch)
+      Option ("-s-","--no-affirmative", BOOLEAN_FALSE_OPT, Boolean_Affirmative_Switch),
+      Option ("+s", "",                 BOOLEAN_FALSE_OPT, Boolean_Affirmative_Switch)
      );   
    
    procedure Put_Option_Value (Option : Option_Type) is
@@ -129,10 +131,11 @@ begin
       
       Put_Line ("This program ('" & Command_Name & "') recognises the following options:");
       for O of Options loop
-         Put (O.Short_Option'Image);
+         Put (O.Short_Option_Prefix'Image);
+         Put (" " & O.Short_Option'Image);
          Put (" " & O.Short_Option_Suffix'Image);
          Put (ASCII.HT & O.Option_Kind'Image);
-         Set_Col(28);
+         Set_Col(32);
          Put (ASCII.HT & "Is_Present = " & O.Is_Present'Image);
          Put( ASCII.HT & """" & O.Long_Option.all & """");
          New_Line;
@@ -143,10 +146,11 @@ begin
       
       for O of Options loop
          if O.Is_Present then
-            Put (O.Short_Option'Image);
+            Put (O.Short_Option_Prefix'Image);
+            Put (" " & O.Short_Option'Image);
             Put (" " & O.Short_Option_Suffix'Image);
             Put (ASCII.HT & O.Option_Kind'Image);
-            Set_Col(30);
+            Set_Col(34);
             Put_Option_Value (O);
             New_Line;
          end if;
