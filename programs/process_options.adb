@@ -109,7 +109,7 @@ begin
       --      );
       -- end if;
       --
-      -- Process_Oprions (Options);
+      -- Process_Options (Options);
       
       Put_Line ("This program ('" & Command_Name & "') recognises the following options:");
       for O of Options loop
