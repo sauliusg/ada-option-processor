@@ -1,12 +1,11 @@
 pragma Ada_2022;
 
-with Text_IO; use Text_IO;
-with Ada.Command_Line;  use Ada.Command_Line;
+with Text_IO;          use Text_IO;
+with Ada.Command_Line; use Ada.Command_Line;
 with Option_Processor; use Option_Processor;
+with File_Selector;    use File_Selector;
 
 with Ada.Directories;
-with System.Pool_Local;
-with Ada.Unchecked_Deallocation;
 
 procedure Process_Options is
    
@@ -89,47 +88,6 @@ procedure Process_Options is
               Option.Long_Option.all & "' in Put_Option_Value";
       end case;
    end;
-   
-   package File_Selector is
-      
-      Reclaiming_Pool : System.Pool_Local.Unbounded_Reclaim_Pool;
-      
-      type File_Access is access File_Type;
-      for File_Access'Storage_size use File_Type'Size;
-      
-      function Select_File (File_Indices : File_Index_Array; Idx : Positive) 
-                           return File_Access;
-      
-      procedure Free is new Ada.Unchecked_Deallocation
-        (File_Type, File_Access);
-      
-   end File_Selector;
-   
-   package body File_Selector is
-      
-      function Select_File (File_Indices : File_Index_Array; Idx : Positive) 
-                           return File_Access
-      is
-         Return_File : File_Access;
-      begin
-         if File_Indices (Idx) = 0 then
-            Return_File := new File_Type'(Standard_Input);
-         else
-            Return_File := new File_Type;
-            Open (Return_File.all, In_File, Argument (File_Indices (Idx)));
-         end if;
-         return Return_File;
-      exception
-         when STORAGE_ERROR =>
-            raise STORAGE_ERROR with
-              "package 'File_Selector': storage for selected files exhausted -- " &
-              "you should use Free() " &
-              "after processing each file returned by Select_File()";
-      end;
-      
-   end File_Selector;
-   
-   use File_Selector;
    
 begin
    
