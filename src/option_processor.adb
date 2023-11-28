@@ -158,12 +158,12 @@ package body Option_Processor is
    begin
       case Option.Option_Kind is
          when STRING_OPT    => Put ("specify a string value");
-         when INTEGER_OPT   => Put ("specify integer value");
-         when FLOAT_OPT     => Put ("specify float value");
-         when DOUBLE_OPT    => Put ("specify double value");
-         when NATURAL_OPT   => Put ("specify natural value '>= 0'");
-         when POSITIVE_OPT  => Put ("specify positive value");
-         when CHARACTER_OPT => Put ("specify a singel ASCII character");
+         when INTEGER_OPT   => Put ("specify an integer value");
+         when FLOAT_OPT     => Put ("specify a float value");
+         when DOUBLE_OPT    => Put ("specify a double value");
+         when NATURAL_OPT   => Put ("specify a natural value '>= 0'");
+         when POSITIVE_OPT  => Put ("specify a positive value");
+         when CHARACTER_OPT => Put ("specify a single ASCII character");
          when others => Put ("toggle the option");
       end case;      
    end;
