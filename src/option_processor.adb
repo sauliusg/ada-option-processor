@@ -133,6 +133,18 @@ package body Option_Processor is
       end loop;
    end;
    
+   function Get_Value_String (Option_Index : in out Integer) return String is
+      Value_Separator : String := "=";
+      Value_Sep_Pos : Integer := Index (Argument (Option_Index), Value_Separator);
+   begin
+      if Value_Sep_Pos >= Argument (Option_Index)'First then
+         return Argument (Option_Index) (Value_Sep_Pos + 1 .. Argument (Option_Index)'Last);
+      else
+         Option_Index := Option_Index + 1;
+         return Argument (Option_Index);
+      end if;
+   end;
+   
    procedure Process_Option 
      (
       Cmd_Option : String;
@@ -143,27 +155,20 @@ package body Option_Processor is
    begin
       case Option.Option_Kind is
          when STRING_OPT =>
-            Option_Index := Option_Index + 1;
             Free (Option.Value.String_Value);
-            Option.Value.String_Value := new String'(Argument (Option_Index));
+            Option.Value.String_Value := new String'(Get_Value_String (Option_Index));
          when INTEGER_OPT =>
-            Option_Index := Option_Index + 1;
-            Option.Value.Integer_Value := Integer'Value (Argument (Option_Index));
+            Option.Value.Integer_Value := Integer'Value (Get_Value_String (Option_Index));
          when FLOAT_OPT =>
-            Option_Index := Option_Index + 1;
-            Option.Value.Float_Value := Float'Value (Argument (Option_Index));
+            Option.Value.Float_Value := Float'Value (Get_Value_String (Option_Index));
          when DOUBLE_OPT =>
-            Option_Index := Option_Index + 1;
-            Option.Value.Double_Value := Long_Float'Value (Argument (Option_Index));
+            Option.Value.Double_Value := Long_Float'Value (Get_Value_String (Option_Index));
          when NATURAL_OPT =>
-            Option_Index := Option_Index + 1;
-            Option.Value.Natural_Value := Natural'Value (Argument (Option_Index));
+            Option.Value.Natural_Value := Natural'Value (Get_Value_String (Option_Index));
          when POSITIVE_OPT =>
-            Option_Index := Option_Index + 1;
-            Option.Value.Positive_Value := Positive'Value (Argument (Option_Index));
+            Option.Value.Positive_Value := Positive'Value (Get_Value_String (Option_Index));
          when CHARACTER_OPT =>
-            Option_Index := Option_Index + 1;
-            Option.Value.Character_Value := Argument (Option_Index)(1);
+            Option.Value.Character_Value := Get_Value_String (Option_Index)(1);
          when BOOLEAN_TRUE_OPT =>
             Option.Value.Boolean_Value := True;
          when BOOLEAN_FALSE_OPT =>
@@ -265,29 +270,38 @@ package body Option_Processor is
          raise UNKNOWN_OPTION with
            "unknown short option '" & Option_String & "'";
       else
-         for I in Options'Range loop
-            if Index (Options (I).Long_Option.all, Option_String) = 1 then
-               Found_Instance_Count := Found_Instance_Count + 1;
-               Found_Instances (Found_Instance_Count) := I;
-               if Found_Instance_Count = 1 then
-                  Process_Option
-                    (
-                     Option_String,
-                     Option_Index,
-                     Options (I),
-                     Options
-                    );
+         declare
+            Value_Separator : String := "=";
+            Value_Sep_Pos : Integer := Index (Option_String, Value_Separator);
+            Option_Only : String :=
+              (if Value_Sep_Pos >= Option_String'First 
+                 then Option_String (Option_String'First .. Value_Sep_Pos - 1)
+                 else Option_String);
+         begin
+            for I in Options'Range loop
+               if Index (Options (I).Long_Option.all, Option_Only) = 1 then
+                  Found_Instance_Count := Found_Instance_Count + 1;
+                  Found_Instances (Found_Instance_Count) := I;
+                  if Found_Instance_Count = 1 then
+                     Process_Option
+                       (
+                        Option_Only,
+                        Option_Index,
+                        Options (I),
+                        Options
+                       );
+                  end if;
                end if;
-            end if;
-         end loop;
-         if Found_Instance_Count > 1 then
-            raise AMBIGUOUS_OPTION with
-              "Option '" & Option_String & "' is not unique; possible candidates are: " &
-              Concatenate_Options (Found_Instance_Count, Found_Instances, Options);
-         elsif Found_Instance_Count = 0 then
-            raise UNKNOWN_OPTION with
-              "unknown long option '" & Option_String & "'";
+            end loop;
+            if Found_Instance_Count > 1 then
+               raise AMBIGUOUS_OPTION with
+                 "Option '" & Option_Only & "' is not unique; possible candidates are: " &
+                 Concatenate_Options (Found_Instance_Count, Found_Instances, Options);
+            elsif Found_Instance_Count = 0 then
+               raise UNKNOWN_OPTION with
+                 "unknown long option '" & Option_Only & "'";
          end if;
+         end;
       end if;
    end;
    
