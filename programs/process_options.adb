@@ -59,7 +59,7 @@ procedure Process_Options is
       Option ("-i", "--int",      Integer_Parameter),
       Option ("-f", "--float",    Float_Parameter),
       Option ("-b", "--bool",     BOOLEAN_TRUE_OPT),
-      Option ("-b+","--yes-bool", BOOLEAN_TRUE_OPT),
+      Option ("-b+","",           BOOLEAN_TRUE_OPT),
       Option ("-b-","--no-bool",  BOOLEAN_FALSE_OPT)
      );   
    
