@@ -10,6 +10,8 @@ with Ada.Unchecked_Deallocation;
 
 procedure Process_Options is
    
+   HELP_PRINTED : exception;
+   
    -- To check whether the library or the main program have memory
    -- leaks, compile and run with the following GNAT options:
    
@@ -24,6 +26,7 @@ procedure Process_Options is
    procedure Help (Option_String : String; Pos : in out Positive) is
    begin
       Put_Line ("This is a help from the main program ...");
+      raise HELP_PRINTED;
    end;
    
    type Flag_Type is (ONE, TWO, THREE);
@@ -87,14 +90,6 @@ procedure Process_Options is
       end case;
    end;
    
-   File_Indices : File_Index_Array := Get_Options 
-     (
-      Options,
-      Read_STDIN_If_No_Files =>
-        (if Ada.Directories.Simple_Name (Command_Name) = "process_options_no_stdin"
-           then False else True)
-     );
-   
    package File_Selector is
       
       Reclaiming_Pool : System.Pool_Local.Unbounded_Reclaim_Pool;
@@ -138,86 +133,103 @@ procedure Process_Options is
    
 begin
    
-   -- if Ada.Directories.Simple_Name (Command_Name) = "process_options_no_stdin" then
-   --    Put_Line ("Configuring '" & Command_Name & "' to not process STDIN if not files are given...");
-   --    Option_Processor.Configure
-   --      (
-   --       Read_STDIN_If_No_Files => False
-   --      );
-   -- end if;
-   --
-   -- Process_Oprions (Options);
-   
-   Put_Line ("This program ('" & Command_Name & "') recognises the following options:");
-   for O of Options loop
-      Put (O.Short_Option'Image);
-      Put (ASCII.HT & O.Option_Kind'Image);
-      Set_Col(22);
-      Put (ASCII.HT & "Is_Present = " & O.Is_Present'Image);
-      Put( ASCII.HT & """" & O.Long_Option.all & """");
-      New_Line;
-   end loop;
-   
-   New_Line;
-   Put_Line ("The following options were processed on the command line:");
-   
-   for O of Options loop
-      if O.Is_Present then
+   declare
+      File_Indices : File_Index_Array := Get_Options 
+        (
+         Options,
+         Read_STDIN_If_No_Files =>
+           (if Ada.Directories.Simple_Name (Command_Name) = "process_options_no_stdin"
+              then False else True)
+        );
+   begin
+      
+      -- if Ada.Directories.Simple_Name (Command_Name) = "process_options_no_stdin" then
+      --    Put_Line ("Configuring '" & Command_Name & "' to not process STDIN if not files are given...");
+      --    Option_Processor.Configure
+      --      (
+      --       Read_STDIN_If_No_Files => False
+      --      );
+      -- end if;
+      --
+      -- Process_Oprions (Options);
+      
+      Put_Line ("This program ('" & Command_Name & "') recognises the following options:");
+      for O of Options loop
          Put (O.Short_Option'Image);
          Put (ASCII.HT & O.Option_Kind'Image);
-         Set_Col(24);
-         Put_Option_Value (O);
+         Set_Col(22);
+         Put (ASCII.HT & "Is_Present = " & O.Is_Present'Image);
+         Put( ASCII.HT & """" & O.Long_Option.all & """");
          New_Line;
-      end if;
-   end loop;   
-   
-   New_Line;
-   Put_Line ("The following parameter values are current:");
-   
-   Put_Line ("Integer_Parameter : " & Integer_Parameter.Integer_Value'Image);
-   Put_Line ("Float_Parameter   : " & Float_Parameter.Float_Value'Image);
-   Put_Line ("Flag              : " & Flag'Image);
-   
-   if File_Indices'Length > 0 then
+      end loop;
+      
       New_Line;
-      Put_Line ("The following command line arguments are recognised as files:");
-   
-      for F in File_Indices'Range loop
-         Put (F'Image);
-         Put (ASCII.HT & File_Indices (F)'Image);
-         if File_Indices (F) /= 0 then
-            Put (ASCII.HT & """" & Argument (File_Indices (F)) & """");
-         else
-            Put (ASCII.HT & """-"" (STDIN)");
+      Put_Line ("The following options were processed on the command line:");
+      
+      for O of Options loop
+         if O.Is_Present then
+            Put (O.Short_Option'Image);
+            Put (ASCII.HT & O.Option_Kind'Image);
+            Set_Col(24);
+            Put_Option_Value (O);
+            New_Line;
          end if;
-         New_Line;
-      end loop;
+      end loop;   
       
       New_Line;
-      Put_Line ("File contents:");
+      Put_Line ("The following parameter values are current:");
       
-      for F in File_Indices'Range loop
-         declare
-            Input_File : File_Selector.File_Access := Select_File (File_Indices, F);
-            Line_Count : Integer := 0;
-            File_Name : String := 
-              (if File_Indices (F) /= 0 then Argument (File_Indices (F)) else "STDIN");
-         begin
-            Put_Line ("=== """ & File_Name & """ ===");            
-            while not End_Of_File (Input_File.all) loop
-               declare
-                  Line : String := Get_Line (Input_File.all);
-               begin
-                  Line_Count := Line_Count + 1;
-                  Put (Line_Count'Image & ASCII.HT);
-                  Put_Line (Line);
-               end;
-            end loop;
-            Close (Input_File.all);
-            Free (Input_File);
-         end;
-      end loop;
+      Put_Line ("Integer_Parameter : " & Integer_Parameter.Integer_Value'Image);
+      Put_Line ("Float_Parameter   : " & Float_Parameter.Float_Value'Image);
+      Put_Line ("Flag              : " & Flag'Image);
+      
+      if File_Indices'Length > 0 then
+         New_Line;
+         Put_Line ("The following command line arguments are recognised as files:");
+         
+         for F in File_Indices'Range loop
+            Put (F'Image);
+            Put (ASCII.HT & File_Indices (F)'Image);
+            if File_Indices (F) /= 0 then
+               Put (ASCII.HT & """" & Argument (File_Indices (F)) & """");
+            else
+               Put (ASCII.HT & """-"" (STDIN)");
+            end if;
+            New_Line;
+         end loop;
+         
+         New_Line;
+         Put_Line ("File contents:");
+         
+         for F in File_Indices'Range loop
+            declare
+               Input_File : File_Selector.File_Access := Select_File (File_Indices, F);
+               Line_Count : Integer := 0;
+               File_Name : String :=
+                 (if File_Indices (F) /= 0 then Argument (File_Indices (F)) else "STDIN");
+            begin
+               Put_Line ("=== """ & File_Name & """ ===");            
+               while not End_Of_File (Input_File.all) loop
+                  declare
+                     Line : String := Get_Line (Input_File.all);
+                  begin
+                     Line_Count := Line_Count + 1;
+                     Put (Line_Count'Image & ASCII.HT);
+                     Put_Line (Line);
+                  end;
+               end loop;
+               Close (Input_File.all);
+               Free (Input_File);
+            end;
+        end loop;
    
-   end if;
+      end if;
+
+   end;
+
+   exception
+      when HELP_PRINTED => null;
+         
+ end;
    
-end;
+   
