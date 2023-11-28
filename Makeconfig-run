@@ -10,3 +10,7 @@
 ARGUMENT_1_process_options = /dev/null
 
 export ARGUMENT_1_process_options
+
+ARGUMENT_1_procedural_options = /dev/null
+
+export ARGUMENT_1_procedural_options
