@@ -286,7 +286,7 @@ package body Option_Processor is
    begin
       Package_Configuration.Read_STDIN_If_No_Files := Read_STDIN_If_No_Files;
       Package_Configuration.Treat_Single_Dash_As_STDIN := Treat_Single_Dash_As_STDIN;
-      Package_Configuration.Tread_Double_Dash_As_End_Of_Options := Treat_Single_Dash_As_STDIN;
+      Package_Configuration.Tread_Double_Dash_As_End_Of_Options := Tread_Double_Dash_As_End_Of_Options;
       
       declare
          File_Indices : File_Index_Array := Get_Options (Options);
