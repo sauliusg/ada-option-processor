@@ -124,6 +124,9 @@ package Option_Processor is
    
    type File_Index_Array is array (Positive range <>) of Natural;
    
+   type File_Index_Array_Access is access File_Index_Array;
+   for File_Index_Array_Access'Storage_pool use Reclaiming_Pool;
+   
    function Get_Options (Options : in out Option_Array) return File_Index_Array;
    
    function Get_Options
@@ -135,4 +138,25 @@ package Option_Processor is
       Leading_Plus_Starts_Short_Option : Boolean := True
      ) return File_Index_Array;
 
+   -- ------------------------------------------------------------------------
+   
+   function File_Name_Count return Natural;
+   
+   function Get_File_Name (N : Natural) return String;
+   
+   function Get_File_Argument_Index (N : Natural) return Natural;
+      
+   function Get_File_Indices return File_Index_Array;
+   
+   procedure Process_Options (Options : in out Option_Array);
+   
+   procedure Process_Options
+     (
+      Options : in out Option_Array;
+      Read_STDIN_If_No_Files : Boolean;
+      Treat_Single_Dash_As_STDIN : Boolean := True;
+      Tread_Double_Dash_As_End_Of_Options : Boolean := True;
+      Leading_Plus_Starts_Short_Option : Boolean := True
+     );
+   
 end Option_Processor;

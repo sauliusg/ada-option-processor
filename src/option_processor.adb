@@ -309,4 +309,80 @@ package body Option_Processor is
       end;
    end;
    
+   -- ------------------------------------------------------------------------
+   
+   File_Indices : File_Index_Array_Access;
+       
+   procedure Free is new Ada.Unchecked_Deallocation
+     (File_Index_Array, File_Index_Array_Access);
+       
+   function File_Name_Count return Natural is
+   begin
+      if File_Indices = null then
+         return 0;
+      else
+         return File_Indices.all'Length;
+      end if;
+   end;
+   
+   function Get_File_Name (N : Natural) return String is
+   begin
+      if File_Indices = null then
+         return "";
+      elsif File_Indices (N) = 0 then
+         return "-";
+      else
+         return Argument (File_Indices (N));
+      end if;
+   end;
+   
+   function Get_File_Argument_Index (N : Natural) return Natural is
+   begin
+      if File_Indices = null then
+         return 0;
+      elsif N = 0 then
+         return 0;
+      else
+         return File_Indices (N);
+      end if;
+   end;
+   
+   function Get_File_Indices return File_Index_Array is
+   begin
+      if File_Indices = null then
+         return (1..0 => 0);
+      else
+         return File_Indices.all;
+      end if;
+   end;
+   
+   procedure Process_Options (Options : in out Option_Array) is
+   begin
+      Free (File_Indices);
+      File_Indices := new File_Index_Array'(Get_Options (Options));
+   end;
+   
+   procedure Process_Options
+     (
+      Options : in out Option_Array;
+      Read_STDIN_If_No_Files : Boolean;
+      Treat_Single_Dash_As_STDIN : Boolean := True;
+      Tread_Double_Dash_As_End_Of_Options : Boolean := True;
+      Leading_Plus_Starts_Short_Option : Boolean := True
+     ) is
+   begin
+      Free (File_Indices);
+      File_Indices := new File_Index_Array'
+        (
+         Get_Options
+           (
+            Options,
+            Read_STDIN_If_No_Files,
+            Treat_Single_Dash_As_STDIN,
+            Tread_Double_Dash_As_End_Of_Options,
+            Leading_Plus_Starts_Short_Option
+           )
+        );
+   end;
+   
 end Option_Processor;
