@@ -20,20 +20,24 @@ package body Option_Processor is
    function Option
      (
       Short_Option, Long_Option : String;
-      Option_Kind : Option_Value_Kind
+      Option_Kind : Option_Value_Kind;
+      Value_Ref : Option_Value_Access
      ) return Option_Type is
    begin
+      if Value_Ref.Option_Kind = BOOLEAN_TRUE_OPT then
+         Value_Ref.Boolean_Value := True;
+      end if;
       return 
         (
          (if Short_Option'Length > 1
             then Short_Option (Short_Option'First + 1)
             else Default_Short_Option_Value),
-         (if Short_Option'Length > 2 
+         (if Short_Option'Length > 2
             then Short_Option (Short_Option'First + 2)
             else Default_Short_Option_Suffix),
          new String'(Long_Option),
          Option_Kind,
-         new Option_Value_Type (Option_Kind),
+         Value_Ref,
          others => <>
         );
    end;
@@ -41,21 +45,26 @@ package body Option_Processor is
    function Option
      (
       Short_Option, Long_Option : String;
+      Option_Kind : Option_Value_Kind
+     ) return Option_Type is
+   begin
+      return Option
+        (
+         Short_Option, Long_Option, Option_Kind,
+         new Option_Value_Type (Option_Kind)
+        );
+   end;
+   
+   function Option
+     (
+      Short_Option, Long_Option : String;
       Value_Ref : Option_Value_Access
      ) return Option_Type is
    begin
-      return
+      return Option
         (
-         (if Short_Option'Length > 1
-            then Short_Option (Short_Option'First + 1)
-            else Default_Short_Option_Value),
-         (if Short_Option'Length > 2 
-            then Short_Option (Short_Option'First + 2)
-            else Default_Short_Option_Suffix),
-         new String'(Long_Option),
-         Value_Ref.Option_Kind,
-         Value_Ref,
-         others => <>
+         Short_Option, Long_Option,
+         Value_Ref.Option_Kind, Value_Ref
         );
    end;
    
@@ -66,22 +75,15 @@ package body Option_Processor is
         (Option_String : String; Position : in out Positive)
      ) return Option_Type is
    begin
-      return
+      return Option
         (
-         (if Short_Option'Length > 1
-            then Short_Option (Short_Option'First + 1)
-            else Default_Short_Option_Value),
-         (if Short_Option'Length > 2 
-            then Short_Option (Short_Option'First + 2)
-            else Default_Short_Option_Suffix),
-         new String'(Long_Option),
+         Short_Option, Long_Option,
          FUNCTION_OPT,
          new Option_Value_Type'
            (
             Option_Kind => FUNCTION_OPT,
             Process => Processor
-           ),
-         others => <>
+           )
         );
    end;
    

@@ -21,6 +21,8 @@ procedure Process_Options is
    
    Integer_Parameter : Option_Value_Access := new Option_Value_Type (INTEGER_OPT);
    Float_Parameter   : Option_Value_Access := new Option_Value_Type (FLOAT_OPT);
+   Boolean_Affirmative_Switch : Option_Value_Access := new Option_Value_Type (BOOLEAN_TRUE_OPT);
+   Boolean_Negative_Switch    : Option_Value_Access := new Option_Value_Type (BOOLEAN_FALSE_OPT);
    
    procedure Help (Option_String : String; Pos : in out Positive) is
    begin
@@ -61,7 +63,15 @@ procedure Process_Options is
       Option ("-b", "--bool",      BOOLEAN_TRUE_OPT),
       Option ("-b+","",            BOOLEAN_TRUE_OPT),
       Option ("-b-","--no-bool",   BOOLEAN_FALSE_OPT),
-      Option ("",   "--only-long", INTEGER_OPT)
+      Option ("",   "--only-long", INTEGER_OPT),
+      
+      Option ("-q ","--positive",  BOOLEAN_TRUE_OPT,  Boolean_Negative_Switch),
+      Option ("-q+","",            BOOLEAN_TRUE_OPT,  Boolean_Negative_Switch),
+      Option ("-q-","--negative",  BOOLEAN_FALSE_OPT, Boolean_Negative_Switch),
+      
+      Option ("-s" ,"--affirmative",    BOOLEAN_TRUE_OPT,  Boolean_Affirmative_Switch),
+      Option ("-s+","",                 BOOLEAN_TRUE_OPT,  Boolean_Affirmative_Switch),
+      Option ("-s-","--no-affirmative", BOOLEAN_FALSE_OPT, Boolean_Affirmative_Switch)
      );   
    
    procedure Put_Option_Value (Option : Option_Type) is
@@ -79,7 +89,7 @@ procedure Process_Options is
             Put (Option.Value.Natural_Value'Image);
          when POSITIVE_OPT =>
             Put (Option.Value.Positive_Value'Image);
-         when BOOLEAN_TRUE_OPT | BOOLEAN_FALSE_OPT =>
+         when BOOLEAN_FALSE_OPT | BOOLEAN_TRUE_OPT =>
             Put (Option.Value.Boolean_Value'Image);
          when FUNCTION_OPT =>
             Put (Option.Value.Process'Image & " called");
@@ -144,6 +154,8 @@ begin
       Put_Line ("Integer_Parameter : " & Integer_Parameter.Integer_Value'Image);
       Put_Line ("Float_Parameter   : " & Float_Parameter.Float_Value'Image);
       Put_Line ("Flag              : " & Flag'Image);
+      Put_Line ("Positive toggle   : " & Boolean_Affirmative_Switch.Boolean_Value'Image);
+      Put_Line ("Negative toggle   : " & Boolean_Negative_Switch.Boolean_Value'Image);
       
       if File_Indices'Length > 0 then
          New_Line;

@@ -96,6 +96,13 @@ package Option_Processor is
    function Option
      (
       Short_Option, Long_Option : String;
+      Option_Kind : Option_Value_Kind;
+      Value_Ref : Option_Value_Access
+     ) return Option_Type;
+   
+   function Option
+     (
+      Short_Option, Long_Option : String;
       Option_Kind : Option_Value_Kind
      ) return Option_Type;
    
