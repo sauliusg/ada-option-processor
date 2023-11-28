@@ -142,7 +142,7 @@ package body Option_Processor is
    begin
       case Value.Option_Kind is
          when STRING_OPT =>
-            return Value_Image_Length (Value);
+            return Value_Image_Length (Value) + 3;
          when others => 
             return (if Value_Image_Length (Value) <= 2 
                       then 0 
@@ -153,7 +153,7 @@ package body Option_Processor is
    procedure Put (Value : Option_Value_Access) is
    begin
       case Value.Option_Kind is
-         when STRING_OPT    => Put ("""" & Value.String_Value.all & """");
+         when STRING_OPT    => Put (" """ & Value.String_Value.all & """");
          when INTEGER_OPT   => Put (Value.Integer_Value'Image);
          when FLOAT_OPT     => Put (Value.Float_Value'Image);
          when DOUBLE_OPT    => Put (Value.Double_Value'Image);
