@@ -118,16 +118,6 @@ begin
         );
    begin
       
-      -- if Ada.Directories.Simple_Name (Command_Name) = "process_options_no_stdin" then
-      --    Put_Line ("Configuring '" & Command_Name & "' to not process STDIN if not files are given...");
-      --    Option_Processor.Configure
-      --      (
-      --       Read_STDIN_If_No_Files => False
-      --      );
-      -- end if;
-      --
-      -- Process_Options (Options);
-      
       Put_Line ("This program ('" & Command_Name & "') recognises the following options:");
       for O of Options loop
          Put (O.Short_Option_Prefix'Image);
