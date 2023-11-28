@@ -131,7 +131,7 @@ package body Option_Processor is
    procedure Put (Value : Option_Value_Access) is
    begin
       case Value.Option_Kind is
-         when STRING_OPT    => Put (Value.String_Value.all);
+         when STRING_OPT    => Put ("""" & Value.String_Value.all & """");
          when INTEGER_OPT   => Put (Value.Integer_Value'Image);
          when FLOAT_OPT     => Put (Value.Float_Value'Image);
          when DOUBLE_OPT    => Put (Value.Double_Value'Image);
@@ -140,6 +140,25 @@ package body Option_Processor is
          when CHARACTER_OPT => Put (Value.Character_Value'Image);
          when others => null;
       end case;
+   end;
+   
+   procedure Put_Default_Option_Description (Option : Option_Type) is
+   begin
+      case Option.Option_Kind is
+         when STRING_OPT    => Put ("specify a string value");
+         when INTEGER_OPT   => Put ("specify integer value");
+         when FLOAT_OPT     => Put ("specify float value");
+         when DOUBLE_OPT    => Put ("specify double value");
+         when NATURAL_OPT   => Put ("specify natural value '>= 0'");
+         when POSITIVE_OPT  => Put ("specify positive value");
+         when CHARACTER_OPT => Put ("specify a singel ASCII character");
+         when others => Put ("toggle the option");
+      end case;      
+   end;
+   
+   procedure Put_Option_Description (Option : Option_Type) is
+   begin
+      Put_Default_Option_Description (Option);
    end;
    
    procedure Put_Option_Help (Options : Option_Array) is
@@ -177,7 +196,7 @@ package body Option_Processor is
          Put (Options(I).Long_Option.all);
          Put (Options(I).Value);
          Set_Col (Text_IO.Count (Help_Text_Position));
-         Put ("... Option description ...");
+         Put_Option_Description (Options(I));
          New_Line;
       end loop;
    end;
