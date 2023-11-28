@@ -25,7 +25,9 @@ package body Option_Processor is
    begin
       return 
         (
-         Short_Option (Short_Option'First + 1),
+         (if Short_Option'Length > 1
+            then Short_Option (Short_Option'First + 1)
+            else Default_Short_Option_Value),
          (if Short_Option'Length > 2 
             then Short_Option (Short_Option'First + 2)
             else Default_Short_Option_Suffix),
@@ -44,7 +46,9 @@ package body Option_Processor is
    begin
       return
         (
-         Short_Option (Short_Option'First + 1),
+         (if Short_Option'Length > 1
+            then Short_Option (Short_Option'First + 1)
+            else Default_Short_Option_Value),
          (if Short_Option'Length > 2 
             then Short_Option (Short_Option'First + 2)
             else Default_Short_Option_Suffix),
@@ -64,7 +68,9 @@ package body Option_Processor is
    begin
       return
         (
-         Short_Option (Short_Option'First + 1),
+         (if Short_Option'Length > 1
+            then Short_Option (Short_Option'First + 1)
+            else Default_Short_Option_Value),
          (if Short_Option'Length > 2 
             then Short_Option (Short_Option'First + 2)
             else Default_Short_Option_Suffix),

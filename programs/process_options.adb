@@ -51,16 +51,17 @@ procedure Process_Options is
    
    Options : Option_Array :=
      (
-      Option ("-h", "--help",     Help'Access),
-      Option ("-1", "--one",      Set_Flag'Access),
-      Option ("-2", "--two",      Set_Flag'Access),
-      Option ("-3", "--tree",     Set_Flag'Access),
-      Option ("-x", "--xstrange", DOUBLE_OPT),
-      Option ("-i", "--int",      Integer_Parameter),
-      Option ("-f", "--float",    Float_Parameter),
-      Option ("-b", "--bool",     BOOLEAN_TRUE_OPT),
-      Option ("-b+","",           BOOLEAN_TRUE_OPT),
-      Option ("-b-","--no-bool",  BOOLEAN_FALSE_OPT)
+      Option ("-h", "--help",      Help'Access),
+      Option ("-1", "--one",       Set_Flag'Access),
+      Option ("-2", "--two",       Set_Flag'Access),
+      Option ("-3", "--tree",      Set_Flag'Access),
+      Option ("-x", "--xstrange",  DOUBLE_OPT),
+      Option ("-i", "--int",       Integer_Parameter),
+      Option ("-f", "--float",     Float_Parameter),
+      Option ("-b", "--bool",      BOOLEAN_TRUE_OPT),
+      Option ("-b+","",            BOOLEAN_TRUE_OPT),
+      Option ("-b-","--no-bool",   BOOLEAN_FALSE_OPT),
+      Option ("",   "--only-long", INTEGER_OPT)
      );   
    
    procedure Put_Option_Value (Option : Option_Type) is

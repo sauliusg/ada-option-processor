@@ -88,6 +88,7 @@ package Option_Processor is
       Negated : Boolean := False;
    end record;
    
+   Default_Short_Option_Value : constant Character := ' ';
    Default_Short_Option_Suffix : constant Character := ' ';
    
    type Option_Array is array (Positive range <>) of Option_Type;
