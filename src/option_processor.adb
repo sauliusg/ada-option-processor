@@ -114,13 +114,59 @@ package body Option_Processor is
    procedure Free is new Ada.Unchecked_Deallocation
      (String, Option_Value_String);
    
+   function Value_Length (Value : Option_Value_Access) return Natural is
+   begin
+      case Value.Option_Kind is
+         when STRING_OPT    => return Value.String_Value.all'Length;
+         when INTEGER_OPT   => return Value.Integer_Value'Image'Length;
+         when FLOAT_OPT     => return Value.Float_Value'Image'Length;
+         when DOUBLE_OPT    => return Value.Double_Value'Image'Length;
+         when NATURAL_OPT   => return Value.Natural_Value'Image'Length;
+         when POSITIVE_OPT  => return Value.Positive_Value'Image'Length;
+         when CHARACTER_OPT => return Value.Character_Value'Image'Length;
+         when others => return 0;
+      end case;
+   end;
+   
+   procedure Put (Value : Option_Value_Access) is
+   begin
+      case Value.Option_Kind is
+         when STRING_OPT    => Put (Value.String_Value.all);
+         when INTEGER_OPT   => Put (Value.Integer_Value'Image);
+         when FLOAT_OPT     => Put (Value.Float_Value'Image);
+         when DOUBLE_OPT    => Put (Value.Double_Value'Image);
+         when NATURAL_OPT   => Put (Value.Natural_Value'Image);
+         when POSITIVE_OPT  => Put (Value.Positive_Value'Image);
+         when CHARACTER_OPT => Put (Value.Character_Value'Image);
+         when others => null;
+      end case;
+   end;
+   
    procedure Put_Option_Help (Options : Option_Array) is
       Short_Option : String (1..3);
+      Max_Value_Length : Natural := 0;
+      Max_Long_Option_Length : Natural := 0;
+      Option_Start_Position : Positive := 4;
+      Help_Text_Position : Positive := Option_Start_Position + Short_Option'Length;
    begin
       for I in Options'Range loop
+         if Max_Value_Length < Value_Length (Options(I).Value) then
+            Max_Value_Length := Value_Length (Options(I).Value);
+         end if;
+         if Max_Long_Option_Length < Options(I).Long_Option.all'Length then
+            Max_Long_Option_Length := Options(I).Long_Option.all'Length;
+         end if;
+      end loop;
+      Help_Text_Position :=
+        Help_Text_Position + Max_Value_Length + Max_Long_Option_Length;
+      for I in Options'Range loop
          Short_Option := 
-           (Options(I).Short_Option_Prefix, Options(I).Short_Option, Options(I).Short_Option_Suffix);
-         Set_Col (4);
+           (
+            Options(I).Short_Option_Prefix,
+            Options(I).Short_Option,
+            Options(I).Short_Option_Suffix
+           );
+         Set_Col (Text_IO.COunt (Option_Start_Position));
          Put (Short_Option);
          if Short_Option /= 3 * " " then
             Put (",");
@@ -129,6 +175,9 @@ package body Option_Processor is
          end if;
          Put (" ");
          Put (Options(I).Long_Option.all);
+         Put (Options(I).Value);
+         Set_Col (Text_IO.Count (Help_Text_Position));
+         Put ("... Option description ...");
          New_Line;
       end loop;
    end;
