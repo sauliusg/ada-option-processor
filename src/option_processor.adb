@@ -12,9 +12,9 @@ package body Option_Processor is
       Tread_Double_Dash_As_End_Of_Options : Boolean := True
      ) is
    begin
-      Option_Processor.Read_STDIN_If_No_Files := Read_STDIN_If_No_Files;
-      Option_Processor.Treat_Single_Dash_As_STDIN := Treat_Single_Dash_As_STDIN;
-      Option_Processor.Tread_Double_Dash_As_End_Of_Options := Tread_Double_Dash_As_End_Of_Options;
+      Package_Configuration.Read_STDIN_If_No_Files := Read_STDIN_If_No_Files;
+      Package_Configuration.Treat_Single_Dash_As_STDIN := Treat_Single_Dash_As_STDIN;
+      Package_Configuration.Tread_Double_Dash_As_End_Of_Options := Tread_Double_Dash_As_End_Of_Options;
    end;
    
    function Option
@@ -229,14 +229,15 @@ package body Option_Processor is
             if not No_More_Options and then
               Option_String (Option_String'First) = '-' and then 
               Option_String'Length > 1 then
-               if Tread_Double_Dash_As_End_Of_Options and then Option_String = "--" then
+               if Package_Configuration.Tread_Double_Dash_As_End_Of_Options and then 
+                 Option_String = "--" then
                   No_More_Options := True;
                else
                   Get_Option (Option_String, Argument_Idx, Options);
                end if;
             else
                N_Files := N_Files + 1;
-               if Treat_Single_Dash_As_STDIN and then
+               if Package_Configuration.Treat_Single_Dash_As_STDIN and then
                  Option_String = "-" then
                   Files (N_Files) := 0;
                else
@@ -246,7 +247,7 @@ package body Option_Processor is
          end;
          Argument_Idx := Argument_Idx + 1;
       end loop;
-      if Read_STDIN_If_No_Files and then N_Files = 0 then
+      if Package_Configuration.Read_STDIN_If_No_Files and then N_Files = 0 then
          N_Files := 1;
          Files (N_Files) := 0;
       end if;
@@ -261,20 +262,16 @@ package body Option_Processor is
       Tread_Double_Dash_As_End_Of_Options : Boolean := True
      ) return File_Index_Array
    is
-      Old_Read_STDIN_If_No_Files : Boolean := Option_Processor.Read_STDIN_If_No_Files;
-      Old_Treat_Single_Dash_As_STDIN : Boolean := Option_Processor.Treat_Single_Dash_As_STDIN;
-      Old_Tread_Double_Dash_As_End_Of_Options : Boolean := Option_Processor.Tread_Double_Dash_As_End_Of_Options;
+      Old_Package_Configuration : Configuration_Type := Package_Configuration;
    begin
-      Option_Processor.Read_STDIN_If_No_Files := Read_STDIN_If_No_Files;
-      Option_Processor.Treat_Single_Dash_As_STDIN := Treat_Single_Dash_As_STDIN;
-      Option_Processor.Tread_Double_Dash_As_End_Of_Options := Treat_Single_Dash_As_STDIN;
+      Package_Configuration.Read_STDIN_If_No_Files := Read_STDIN_If_No_Files;
+      Package_Configuration.Treat_Single_Dash_As_STDIN := Treat_Single_Dash_As_STDIN;
+      Package_Configuration.Tread_Double_Dash_As_End_Of_Options := Treat_Single_Dash_As_STDIN;
       
       declare
          File_Indices : File_Index_Array := Get_Options (Options);
       begin
-         Option_Processor.Read_STDIN_If_No_Files := Old_Read_STDIN_If_No_Files;
-         Option_Processor.Treat_Single_Dash_As_STDIN := Old_Treat_Single_Dash_As_STDIN;
-         Option_Processor.Tread_Double_Dash_As_End_Of_Options := Old_Treat_Single_Dash_As_STDIN;
+         Package_Configuration := Old_Package_Configuration;
          return File_Indices;
       end;
    end;

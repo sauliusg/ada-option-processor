@@ -11,11 +11,13 @@ package Option_Processor is
    
    -- Package configuration variables:
    
-   Read_STDIN_If_No_Files : Boolean := True;
+   type Configuration_Type is record
+      Read_STDIN_If_No_Files : Boolean := True;
+      Treat_Single_Dash_As_STDIN : Boolean := True;
+      Tread_Double_Dash_As_End_Of_Options : Boolean := True;
+   end record;
    
-   Treat_Single_Dash_As_STDIN : Boolean := True;
-   
-   Tread_Double_Dash_As_End_Of_Options : Boolean := True;
+   Package_Configuration : Configuration_Type;
    
    procedure Configure
      (
