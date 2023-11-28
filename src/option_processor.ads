@@ -46,7 +46,7 @@ package Option_Processor is
 
    type Option_Value_Kind is
      (
-      NONE, STRING_OPT, INTEGER_OPT, FLOAT_OPT, DOUBLE_OPT, NATURAL_OPT,
+      STRING_OPT, INTEGER_OPT, FLOAT_OPT, DOUBLE_OPT, NATURAL_OPT,
       POSITIVE_OPT, CHARACTER_OPT, BOOLEAN_TRUE_OPT, BOOLEAN_FALSE_OPT,
       FUNCTION_OPT
      );
@@ -54,8 +54,6 @@ package Option_Processor is
    type Option_Value_Type (Option_Kind : Option_Value_Kind := STRING_OPT)
       is record
       case Option_Kind is
-         when NONE =>
-            null;
          when STRING_OPT =>
             String_Value : Option_Value_String := new String'("");
          when INTEGER_OPT =>
