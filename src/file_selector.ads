@@ -2,7 +2,6 @@ with Text_IO; use Text_IO;
 with Option_Processor; use Option_Processor;
 
 with System.Pool_Local;
-with Ada.Unchecked_Deallocation;
 
 package File_Selector is
    
@@ -14,7 +13,6 @@ package File_Selector is
    function Select_File (File_Indices : File_Index_Array; Idx : Positive) 
                         return File_Access;
    
-   procedure Free is new Ada.Unchecked_Deallocation
-     (File_Type, File_Access);
+   procedure Close (File : in out File_Access);
    
 end File_Selector;

@@ -176,8 +176,7 @@ begin
                      Put_Line (Line);
                   end;
                end loop;
-               Close (Input_File.all);
-               Free (Input_File);
+               Close (Input_File);
             end;
         end loop;
    

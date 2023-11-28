@@ -1,6 +1,17 @@
 with Ada.Command_Line; use Ada.Command_Line;
 
+with Ada.Unchecked_Deallocation;
+
 package body File_Selector is
+   
+   procedure Free is new Ada.Unchecked_Deallocation
+     (File_Type, File_Access);
+   
+   procedure Close (File : in out File_Access) is
+   begin
+      Close (File.all);
+      Free (File);
+   end;
    
    function Select_File (File_Indices : File_Index_Array; Idx : Positive) 
                         return File_Access
