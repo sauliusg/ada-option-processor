@@ -80,11 +80,15 @@ package Option_Processor is
    
    type Option_Type is record
       Short_Option : Character;
+      Short_Option_suffix : Character; -- '+' or '-' for negation;
       Long_Option : String_Access;
       Option_Kind : Option_Value_Kind;
       Value : Option_Value_Access;
       Is_Present : Boolean := False;
+      Negated : Boolean := False;
    end record;
+   
+   Default_Short_Option_Suffix : constant Character := ' ';
    
    type Option_Array is array (Positive range <>) of Option_Type;
    

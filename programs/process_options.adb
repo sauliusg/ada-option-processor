@@ -59,6 +59,7 @@ procedure Process_Options is
       Option ("-i", "--int",      Integer_Parameter),
       Option ("-f", "--float",    Float_Parameter),
       Option ("-b", "--bool",     BOOLEAN_TRUE_OPT),
+      Option ("-b+","--bool",     BOOLEAN_TRUE_OPT),
       Option ("-b-","--no-bool",  BOOLEAN_FALSE_OPT)
      );   
    
@@ -114,8 +115,9 @@ begin
       Put_Line ("This program ('" & Command_Name & "') recognises the following options:");
       for O of Options loop
          Put (O.Short_Option'Image);
+         Put (" " & O.Short_Option_Suffix'Image);
          Put (ASCII.HT & O.Option_Kind'Image);
-         Set_Col(22);
+         Set_Col(28);
          Put (ASCII.HT & "Is_Present = " & O.Is_Present'Image);
          Put( ASCII.HT & """" & O.Long_Option.all & """");
          New_Line;
@@ -127,8 +129,9 @@ begin
       for O of Options loop
          if O.Is_Present then
             Put (O.Short_Option'Image);
+            Put (" " & O.Short_Option_Suffix'Image);
             Put (ASCII.HT & O.Option_Kind'Image);
-            Set_Col(24);
+            Set_Col(30);
             Put_Option_Value (O);
             New_Line;
          end if;

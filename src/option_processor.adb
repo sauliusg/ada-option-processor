@@ -26,6 +26,9 @@ package body Option_Processor is
       return 
         (
          Short_Option (Short_Option'First + 1),
+         (if Short_Option'Length > 2 
+            then Short_Option (Short_Option'First + 2)
+            else Default_Short_Option_Suffix),
          new String'(Long_Option),
          Option_Kind,
          new Option_Value_Type (Option_Kind),
@@ -42,6 +45,9 @@ package body Option_Processor is
       return
         (
          Short_Option (Short_Option'First + 1),
+         (if Short_Option'Length > 2 
+            then Short_Option (Short_Option'First + 2)
+            else Default_Short_Option_Suffix),
          new String'(Long_Option),
          Value_Ref.Option_Kind,
          Value_Ref,
@@ -59,6 +65,9 @@ package body Option_Processor is
       return
         (
          Short_Option (Short_Option'First + 1),
+         (if Short_Option'Length > 2 
+            then Short_Option (Short_Option'First + 2)
+            else Default_Short_Option_Suffix),
          new String'(Long_Option),
          FUNCTION_OPT,
          new Option_Value_Type'
@@ -176,7 +185,13 @@ package body Option_Processor is
             declare
                Option_Letter_Idx : constant Integer := Option_String'First + 1;
             begin
-               if Option_String (Option_Letter_Idx) = Options (I).Short_Option then
+               if Option_String (Option_Letter_Idx) = Options (I).Short_Option and then
+                 ((Option_String'Length = 2 and then
+                     Options (I).Short_Option_Suffix = Default_Short_Option_Suffix)
+                  or else
+                    (Option_String'Length = 3 and then 
+                       Option_String (Option_Letter_Idx + 1) = Options (I).Short_Option_suffix))
+               then
                   Process_Option (
                      Option_String,
                      Option_Index,
