@@ -107,7 +107,7 @@ procedure Procedural_Options is
 begin
    
    if Ada.Directories.Simple_Name (Command_Name) = "procedural_options_no_stdin" then
-      Put_Line ("Configuring '" & Command_Name & "' to not process STDIN if not files are given...");
+      Put_Line ("Configuring '" & Command_Name & "' to not process STDIN if no files are given...");
       Option_Processor.Configure
         (
          Read_STDIN_If_No_Files => False
