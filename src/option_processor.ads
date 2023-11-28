@@ -133,7 +133,7 @@ package Option_Processor is
      (
       Short_Option, Long_Option : String;
       Processor : access procedure
-        (Option_String : String; Position : in out Positive);
+        (Option_String : String; Position : in out Positive) := null;
       Help : String := ""
      ) return Option_Type;
 
