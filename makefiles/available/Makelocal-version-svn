@@ -1,0 +1,63 @@
+#---*- Makefile -*-------------------------------------------------------
+#$Author: saulius $
+#$Date: 2022-03-17 12:17:01 +0200 (Thu, 17 Mar 2022) $
+#$Revision: 299 $
+#$URL: svn+ssh://saulius-grazulis.lt/home/saulius/svn-repositories/makefiles/versions-release-in-filesystem/Makelocal-version-svn $
+#------------------------------------------------------------------------
+
+TRUNK    ?= ../trunk
+BRANCHES ?= ../branches
+RELEASES ?= ${BRANCHES}
+PKG_NAME ?= $(shell pwd | xargs dirname | xargs basename)
+
+SVN_VERSION_KEYWORDS ?= WIP $$Revision: 299 $$ $$URL: svn+ssh://saulius-grazulis.lt/home/saulius/svn-repositories/makefiles/versions-release-in-filesystem/Makelocal-version-svn $$
+
+.PHONY: release major minor patch
+
+VFILE ?= .version
+
+.PRECIOUS: ${VERSION_PM}
+
+REPORTED_VERSION := $(shell grep -v "^\#" ${VFILE} | awk '{print $$0}' | sed 's/\$$//g; s/  */ /g')
+VERSION := $(shell grep -v "^\#" ${VFILE} | awk '{print $$1}' )
+
+%: %.in ${VFILE}
+	sed 's,@VERSION@,${REPORTED_VERSION},' $< > $@
+
+release:
+	perl -lpi -e 's/\(unreleased\)/(${VERSION})/ if $$. == 1' CHANGELOG
+	perl -lpi -e 's/\.\.\./${PKG_NAME}/ if $$. == 1' CHANGELOG
+	awk '/^#/{print} !/^#/{print $$1}' ${VFILE} > ${VFILE}.$$$$; \
+	mv -f ${VFILE}.$$$$ ${VFILE}
+	echo "CHANGELOG: switching from 'unreleased' to '${VERSION}'"
+	svn cp ${TRUNK} ${RELEASES}/v${VERSION}
+	${MAKE} patch
+	echo "${PKG_NAME} (unreleased)\n\n  * ...\n" | cat - CHANGELOG \
+		> CHANGELOG.$$$$.tmp; \
+	mv -f CHANGELOG.$$$$.tmp CHANGELOG
+	awk '/^#/{print} !/^#/{print $$1, "${SVN_VERSION_KEYWORDS}"}' ${VFILE} \
+		> ${VFILE}.$$$$; \
+	mv -f ${VFILE}.$$$$ ${VFILE}
+
+major:
+	awk -F. '/^#/{print} !/^#/{print $$1+1 ".0" ".0", "${SVN_VERSION_KEYWORDS}"}' \
+		${VFILE} > ${VFILE}.$$$$; \
+	cat ${VFILE}.$$$$ > ${VFILE}; \
+	rm -f ${VFILE}.$$$$
+
+minor:
+	awk -F. '/^#/{print} !/^#/{print $$1 "." $$2+1 ".0", "${SVN_VERSION_KEYWORDS}"}' \
+		${VFILE} > ${VFILE}.$$$$; \
+	cat ${VFILE}.$$$$ > ${VFILE}; \
+	rm -f ${VFILE}.$$$$
+
+patch:
+	awk -F. '/^#/{print} !/^#/{print $$1 "." $$2 "." $$3+1, "${SVN_VERSION_KEYWORDS}"}' \
+		${VFILE} > ${VFILE}.$$$$; \
+	cat ${VFILE}.$$$$ > ${VFILE}; \
+	rm -f ${VFILE}.$$$$
+
+cleanAll distclean: clean-version-svn
+
+clean-version-svn:
+	rm -f ${VERSION_PM}

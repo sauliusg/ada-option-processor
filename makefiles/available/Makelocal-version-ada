@@ -1,0 +1,44 @@
+#---*- Makefile -*-------------------------------------------------------
+#$Author: saulius $
+#$Date: 2022-06-26 09:37:19 +0300 (Sun, 26 Jun 2022) $
+#$Revision: 320 $
+#$URL: svn+ssh://saulius-grazulis.lt/home/saulius/svn-repositories/makefiles/versions-release-in-filesystem/Makelocal-version-ada $
+#------------------------------------------------------------------------
+
+VFILE ?= .version
+
+VERSION_ADA_DIR ?= .
+
+VERSION_ADA ?= ${VERSION_ADA_DIR}/project_version.ads
+
+.PRECIOUS: ${VERSION_ADA}
+
+ifeq ("${REPORTED_VERSION}","")
+REPORTED_VERSION := $(shell grep -v "^\#" ${VFILE} | awk '{print $$0}' | sed 's/\$$//g; s/  */ /g')
+endif
+
+ifeq ("${VCS_MESSAGE}","")
+VCS_VERSION := $(shell svnversion)
+VCS_MESSAGE := SVN revision ${VCS_VERSION}
+endif
+
+ifeq (${VCS_VERSION},Unversioned directory)
+    VCS_VERSION := $(shell git log --format='%h' -1 2>/dev/null)
+    ifeq (${VCS_VERSION},)
+        VCS_MESSAGE :=
+    else
+        VCS_MESSAGE := GIT commit ${VCS_VERSION}
+    endif
+endif
+
+%/project_version.ads: %/project_version.ads.in ${VFILE}
+	sed 's,@VERSION@,${REPORTED_VERSION},' $< \
+	| sed 's/@VCS_TEXT@/${VCS_MESSAGE}/' \
+	> $@
+
+.PHONY: cleanAll distclean
+
+cleanAll distclean: clean-version-ada
+
+clean-version-ada:
+	rm -f ${VERSION_ADA}

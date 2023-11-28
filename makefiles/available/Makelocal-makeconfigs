@@ -1,0 +1,20 @@
+#--*- Makefile -*--
+
+# This Makefile generates a local configure Makefile from an example
+# provided in the repository. An existing file is not overwritten, so
+# you can provide your own configuration overrides.
+
+# When a new Makeconf*.example file(s) arrive, the new file is
+# generated with the new Makeconf*.example content first and the old
+# content of the corresponding Makeconf* file appended at the end. In
+# this way, new Make configuration variables are taken from the
+# example, and the local overriding entries are retained.
+
+MAKECONFIG_EXAMPLES = $(filter-out %~, $(wildcard Makeconf*.example))
+GENERATED_MAKECONFIGS = ${MAKECONFIG_EXAMPLES:%.example=%}
+
+include ${GENERATED_MAKECONFIGS}
+
+Makeconf%: Makeconf%.example
+	if [ ! -f $@ ]; then cp $< $@; \
+	else mv $@ $@.tmp; cat $< $@.tmp > $@; rm $@.tmp; fi

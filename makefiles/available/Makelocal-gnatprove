@@ -1,0 +1,25 @@
+#--*- Makefile -*--
+
+# Run SPARK provers on Ada/SPARK programs using 'gnatprove'.
+
+# Extra arguments that can be passed to 'gnatprove', e.g.:
+#
+# GPR_ARGUMENTS ?= -prover=cvc4,z3,altergo,colibri
+# GPR_ARGUMENTS ?= -report=provers
+# GPR_ARGUMENTS ?= -report=all
+
+GNATPROVE_PROOVERS ?=
+
+GNATPROVE_ARGUMENTS ?=
+
+GPR_PROJECT ?= $(shell find -maxdepth 1 -name '*.gpr' | sort | head -n 1)
+
+.PHONY: prove gnatprove gnatprove-clean
+
+dist-clean: gnatprove-clean
+
+prove gnatprove:
+	gnatprove -P ${GPR_PROJECT} ${GNATPROVE_PROOVERS} ${GNATPROVE_ARGUMENTS}
+
+gnatprove-clean:
+	rm -rf gnatprove

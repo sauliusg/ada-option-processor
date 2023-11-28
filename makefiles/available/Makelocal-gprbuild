@@ -1,0 +1,15 @@
+#--*- Makefile -*--
+
+# Build Ada/SPARK programs using 'gprbuild'.
+
+GPRBUILD_ARGUMENTS ?=
+
+GPR_PROJECT ?= $(shell find -maxdepth 1 -name '*.gpr' | sort | head -n 1)
+
+.PHONY: build gprbuild gprclean
+
+build gprbuild:
+	gprbuild ${GPRBUILD_ARGUMENTS} -P ${GPR_PROJECT}
+
+gprclean:
+	gprclean ${GPRBUILD_ARGUMENTS} -P ${GPR_PROJECT}
