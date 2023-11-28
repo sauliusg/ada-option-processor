@@ -9,6 +9,8 @@ package Option_Processor is
    AMBIGUOUS_OPTION : exception;
    MISSING_OPTION_ARGUMENT : exception;
    
+   HELP_PRINTED : exception;
+   
    -- Package configuration variables:
    
    type Configuration_Type is record
@@ -50,7 +52,7 @@ package Option_Processor is
      (
       STRING_OPT, INTEGER_OPT, FLOAT_OPT, DOUBLE_OPT, NATURAL_OPT,
       POSITIVE_OPT, CHARACTER_OPT, BOOLEAN_TRUE_OPT, BOOLEAN_FALSE_OPT,
-      FUNCTION_OPT
+      FUNCTION_OPT, HELP_OPT
      );
    
    type Option_Value_Type (Option_Kind : Option_Value_Kind := STRING_OPT)
@@ -72,7 +74,7 @@ package Option_Processor is
             Character_Value : Character := ' ';
          when BOOLEAN_TRUE_OPT | BOOLEAN_FALSE_OPT =>
             Boolean_Value : Boolean := False;
-         when FUNCTION_OPT =>
+         when FUNCTION_OPT | HELP_OPT =>
             Process : Option_Processor_Type;
       end case;
    end record;
@@ -122,6 +124,13 @@ package Option_Processor is
         (Option_String : String; Position : in out Positive)
      ) return Option_Type;
    
+   function Help_Option
+     (
+      Short_Option, Long_Option : String;
+      Processor : access procedure
+        (Option_String : String; Position : in out Positive)
+     ) return Option_Type;
+
    type File_Index_Array is array (Positive range <>) of Natural;
    
    type File_Index_Array_Access is access File_Index_Array;

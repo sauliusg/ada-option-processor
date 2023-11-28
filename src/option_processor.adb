@@ -1,3 +1,4 @@
+with Text_IO;           use Text_IO;
 with Ada.Strings.Fixed; use Ada.Strings.Fixed;
 with Ada.Command_Line;  use Ada.Command_Line;
 
@@ -89,16 +90,55 @@ package body Option_Processor is
         );
    end;
    
+   function Help_Option
+     (
+      Short_Option, Long_Option : String;
+      Processor : access procedure
+        (Option_String : String; Position : in out Positive)
+     ) return Option_Type is
+   begin
+      return Option
+        (
+         Short_Option, Long_Option,
+         HELP_OPT,
+         new Option_Value_Type'
+           (
+            Option_Kind => FUNCTION_OPT,
+            Process => Processor
+           )
+        );
+   end;
+   
    -- -------------------------------------------------------------------------
    
    procedure Free is new Ada.Unchecked_Deallocation
      (String, Option_Value_String);
    
+   procedure Put_Option_Help (Options : Option_Array) is
+      Short_Option : String (1..3);
+   begin
+      for I in Options'Range loop
+         Short_Option := 
+           (Options(I).Short_Option_Prefix, Options(I).Short_Option, Options(I).Short_Option_Suffix);
+         Set_Col (4);
+         Put (Short_Option);
+         if Short_Option /= 3 * " " then
+            Put (",");
+         else 
+            Put (" ");
+         end if;
+         Put (" ");
+         Put (Options(I).Long_Option.all);
+         New_Line;
+      end loop;
+   end;
+   
    procedure Process_Option 
      (
       Cmd_Option : String;
       Option_Index : in out Integer;
-      Option : in out Option_Type
+      Option : in out Option_Type;
+      Options : in Option_Array
      ) is
    begin
       case Option.Option_Kind is
@@ -130,6 +170,12 @@ package body Option_Processor is
             Option.Value.Boolean_Value := False;
          when FUNCTION_OPT =>
             Option.Value.Process (Option.Long_Option.all, Option_Index);
+         when HELP_OPT =>
+            if Option.Value.Process /= null then
+               Option.Value.Process (Option.Long_Option.all, Option_Index);
+            end if;
+            Put_Option_Help (Options);
+            raise HELP_PRINTED;
          when others =>
             raise UNKNOWN_OPTION with
               "INTERNAL ERROR -- unknown option kind '" &
@@ -205,10 +251,12 @@ package body Option_Processor is
                     (Option_String'Length = 3 and then 
                        Option_String (Option_Letter_Idx + 1) = Options (I).Short_Option_suffix))
                then
-                  Process_Option (
+                  Process_Option 
+                    (
                      Option_String,
                      Option_Index,
-                     Options (I)
+                     Options (I),
+                     Options
                     );
                   return;
                end if;
@@ -226,7 +274,8 @@ package body Option_Processor is
                     (
                      Option_String,
                      Option_Index,
-                     Options (I)
+                     Options (I),
+                     Options
                     );
                end if;
             end if;

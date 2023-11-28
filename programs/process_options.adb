@@ -9,8 +9,6 @@ with Ada.Directories;
 
 procedure Process_Options is
    
-   HELP_PRINTED : exception;
-   
    -- To check whether the library or the main program have memory
    -- leaks, compile and run with the following GNAT options:
    
@@ -31,7 +29,6 @@ procedure Process_Options is
    procedure Help (Option_String : String; Pos : in out Positive) is
    begin
       Put_Line ("This is a help from the main program ...");
-      raise HELP_PRINTED;
    end;
    
    type Flag_Type is (ONE, TWO, THREE);
@@ -57,7 +54,7 @@ procedure Process_Options is
    
    Options : Option_Array :=
      (
-      Option ("-h", "--help",      Help'Access),
+      Help_Option ("-h", "--help", Help'Access),
       Option ("-1", "--one",       Set_Flag'Access),
       Option ("-2", "--two",       Set_Flag'Access),
       Option ("-3", "--tree",      Set_Flag'Access),
@@ -99,6 +96,8 @@ procedure Process_Options is
             Put (Option.Value.Boolean_Value'Image);
          when FUNCTION_OPT =>
             Put (Option.Value.Process'Image & " called");
+         when HELP_OPT =>
+            Put (Option.Value.Process'Image & " as help printer");
          when others =>
             raise UNKNOWN_OPTION with
               "INTERNAL ERROR -- unknown option kind '" &
