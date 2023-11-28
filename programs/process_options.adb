@@ -21,8 +21,12 @@ procedure Process_Options is
    
    Integer_Parameter : Option_Value_Access := new Option_Value_Type (INTEGER_OPT);
    Float_Parameter   : Option_Value_Access := new Option_Value_Type (FLOAT_OPT);
-   Boolean_Affirmative_Switch : Option_Value_Access := new Option_Value_Type (BOOLEAN_TRUE_OPT);
-   Boolean_Negative_Switch    : Option_Value_Access := new Option_Value_Type (BOOLEAN_FALSE_OPT);
+   
+   Boolean_Affirmative_Switch : Option_Value_Access := 
+     new Option_Value_Type'(BOOLEAN_TRUE_OPT, Boolean_Value => True);
+   
+   Boolean_Negative_Switch : Option_Value_Access := 
+     new Option_Value_Type (BOOLEAN_FALSE_OPT);
    
    procedure Help (Option_String : String; Pos : in out Positive) is
    begin

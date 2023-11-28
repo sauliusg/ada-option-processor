@@ -24,9 +24,6 @@ package body Option_Processor is
       Value_Ref : Option_Value_Access
      ) return Option_Type is
    begin
-      if Value_Ref.Option_Kind = BOOLEAN_TRUE_OPT then
-         Value_Ref.Boolean_Value := True;
-      end if;
       return 
         (
          (if Short_Option'Length > 1
