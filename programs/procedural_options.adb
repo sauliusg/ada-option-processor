@@ -3,6 +3,7 @@ pragma Ada_2022;
 with Text_IO;          use Text_IO;
 with Ada.Command_Line; use Ada.Command_Line;
 with Option_Processor; use Option_Processor;
+with Free_Options;     use Free_Options;
 with File_Selector;    use File_Selector;
 
 with Ada.Directories;
@@ -191,7 +192,9 @@ begin
       end loop;
    
    end if;
-
+   
+   Free_Options.Free_Options (Options);
+   
    exception
       when HELP_PRINTED => null;
          

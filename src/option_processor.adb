@@ -24,7 +24,8 @@ package body Option_Processor is
      (
       Short_Option, Long_Option : String;
       Option_Kind : Option_Value_Kind;
-      Value_Ref : Option_Value_Access
+      Value_Ref : Option_Value_Access;
+      Help : String := ""
      ) return Option_Type is
    begin
       return 
@@ -41,6 +42,7 @@ package body Option_Processor is
          new String'(Long_Option),
          Option_Kind,
          Value_Ref,
+         Help => (if Help /= "" then new String'(Help) else null),
          others => <>
         );
    end;
@@ -48,26 +50,30 @@ package body Option_Processor is
    function Option
      (
       Short_Option, Long_Option : String;
-      Option_Kind : Option_Value_Kind
+      Option_Kind : Option_Value_Kind;
+      Help : String := ""
      ) return Option_Type is
    begin
       return Option
         (
          Short_Option, Long_Option, Option_Kind,
-         new Option_Value_Type (Option_Kind)
+         new Option_Value_Type (Option_Kind),
+         Help
         );
    end;
    
    function Option
      (
       Short_Option, Long_Option : String;
-      Value_Ref : Option_Value_Access
+      Value_Ref : Option_Value_Access;
+      Help : String := ""
      ) return Option_Type is
    begin
       return Option
         (
          Short_Option, Long_Option,
-         Value_Ref.Option_Kind, Value_Ref
+         Value_Ref.Option_Kind, Value_Ref,
+         Help
         );
    end;
    
@@ -75,7 +81,8 @@ package body Option_Processor is
      (
       Short_Option, Long_Option : String;
       Processor : access procedure
-        (Option_String : String; Position : in out Positive)
+        (Option_String : String; Position : in out Positive);
+      Help : String := ""
      ) return Option_Type is
    begin
       return Option
@@ -86,7 +93,8 @@ package body Option_Processor is
            (
             Option_Kind => FUNCTION_OPT,
             Process => Processor
-           )
+           ),
+         Help
         );
    end;
    
@@ -94,7 +102,8 @@ package body Option_Processor is
      (
       Short_Option, Long_Option : String;
       Processor : access procedure
-        (Option_String : String; Position : in out Positive)
+        (Option_String : String; Position : in out Positive);
+      Help : String := ""
      ) return Option_Type is
    begin
       return Option
@@ -105,7 +114,8 @@ package body Option_Processor is
            (
             Option_Kind => FUNCTION_OPT,
             Process => Processor
-           )
+           ),
+         Help
         );
    end;
    
@@ -164,13 +174,18 @@ package body Option_Processor is
          when NATURAL_OPT   => Put ("specify a natural value '>= 0'");
          when POSITIVE_OPT  => Put ("specify a positive value");
          when CHARACTER_OPT => Put ("specify a single ASCII character");
+         when HELP_OPT      => Put ("print a short help message and exit");
          when others => Put ("toggle the option");
       end case;      
    end;
    
    procedure Put_Option_Description (Option : Option_Type) is
    begin
-      Put_Default_Option_Description (Option);
+      if Option.Help /= null then
+         Put (Option.Help.all);
+      else
+         Put_Default_Option_Description (Option);
+      end if;
    end;
    
    procedure Put_Option_Help (Options : Option_Array) is

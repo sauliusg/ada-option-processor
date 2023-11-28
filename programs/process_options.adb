@@ -58,9 +58,9 @@ procedure Process_Options is
    Options : Option_Array :=
      (
       Help_Option ("-h", "--help", Help'Access),
-      Option ("-1", "--one",       Set_Flag'Access),
-      Option ("-2", "--two",       Set_Flag'Access),
-      Option ("-3", "--tree",      Set_Flag'Access),
+      Option ("-1", "--one",       Set_Flag'Access, Help => "Set selection to ONE"),
+      Option ("-2", "--two",       Set_Flag'Access, Help => "Set selection to TWO"),
+      Option ("-3", "--tree",      Set_Flag'Access, Help => "Set selection to THREE"),
       Option ("-x", "--xstrange",  DOUBLE_OPT),
       Option ("-i", "--int",       Integer_Parameter),
       Option ("-f", "--float",     Float_Parameter),

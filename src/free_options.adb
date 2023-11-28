@@ -20,6 +20,7 @@ package body Free_Options is
       end if;
       Free (Option.Value);
       Free (Option.Long_Option);
+      Free (Option.Help);
    end;
    
    -- -------------------------------------------------------------------------

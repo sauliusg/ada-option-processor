@@ -91,6 +91,7 @@ package Option_Processor is
       Value : Option_Value_Access;
       Is_Present : Boolean := False;
       Negated : Boolean := False;
+      Help : Option_Value_String;
    end record;
    
    Default_Short_Option_Value : constant Character := ' ';
@@ -102,33 +103,38 @@ package Option_Processor is
      (
       Short_Option, Long_Option : String;
       Option_Kind : Option_Value_Kind;
-      Value_Ref : Option_Value_Access
+      Value_Ref : Option_Value_Access;
+      Help : String := ""
      ) return Option_Type;
    
    function Option
      (
       Short_Option, Long_Option : String;
-      Option_Kind : Option_Value_Kind
+      Option_Kind : Option_Value_Kind;
+      Help : String := ""
      ) return Option_Type;
    
    function Option
      (
       Short_Option, Long_Option : String;
-      Value_Ref : Option_Value_Access
+      Value_Ref : Option_Value_Access;
+      Help : String := ""
      ) return Option_Type;
    
    function Option
      (
       Short_Option, Long_Option : String;
       Processor : access procedure
-        (Option_String : String; Position : in out Positive)
+        (Option_String : String; Position : in out Positive);
+      Help : String := ""
      ) return Option_Type;
    
    function Help_Option
      (
       Short_Option, Long_Option : String;
       Processor : access procedure
-        (Option_String : String; Position : in out Positive)
+        (Option_String : String; Position : in out Positive);
+      Help : String := ""
      ) return Option_Type;
 
    type File_Index_Array is array (Positive range <>) of Natural;
