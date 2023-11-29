@@ -11,6 +11,16 @@ package body Free_Options is
    procedure Free is new Ada.Unchecked_Deallocation
      (String, String_Access);
    
+   procedure Free_Option_Value (Option : in out Option_Type) is
+   begin
+      if Option.Value /= null then
+         if Option.Value.Option_Kind = STRING_OPT then
+            Free (Option.Value.String_Value);
+         end if;
+      end if;
+      Free (Option.Value);
+   end;
+   
    procedure Free_Option (Option : in out Option_Type) is
    begin
       Free (Option.Long_Option);
@@ -54,12 +64,7 @@ package body Free_Options is
       for Option of OA loop
          if not Is_Deallocated (Option.Value, Deallocated_Blocks, Deallocated_Block_Count) then
             Add_Dealocated_Block (Option.Value, Deallocated_Blocks, Deallocated_Block_Count);
-            if Option.Value /= null then
-               if Option.Value.Option_Kind = STRING_OPT then
-                  Free (Option.Value.String_Value);
-               end if;
-            end if;
-            Free (Option.Value);
+            Free_Option_Value (Option);
          end if;
          Free_Option (Option);
       end loop;
