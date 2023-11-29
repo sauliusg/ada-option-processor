@@ -237,7 +237,11 @@ package body Option_Processor is
          return Argument (Option_Index) (Value_Sep_Pos + 1 .. Argument (Option_Index)'Last);
       else
          Option_Index := Option_Index + 1;
-         return Argument (Option_Index);
+         if Option_Index <= Argument_Count then
+            return Argument (Option_Index);
+         else
+            raise MISSING_OPTION_ARGUMENT;
+         end if;
       end if;
    end;
    
@@ -284,6 +288,10 @@ package body Option_Processor is
               Cmd_Option & "'";
       end case;
       Option.Is_Present := True;
+   exception
+      when MISSING_OPTION_ARGUMENT =>
+         raise MISSING_OPTION_ARGUMENT with
+           "option '" & Cmd_Option & "' requires a value";
    end;
    
    type Index_List_Type is array (Positive range <>) of Integer;
