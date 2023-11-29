@@ -82,7 +82,7 @@ procedure Procedural_Options is
    begin
       case Option.Option_Kind is
          when STRING_OPT =>
-            Put (Option.Value.String_Value.all);
+            Put ("'" & Option.Value.String_Value.all & "'");
          when INTEGER_OPT =>
             Put (Option.Value.Integer_Value'Image);
          when FLOAT_OPT =>
