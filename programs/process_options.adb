@@ -165,6 +165,11 @@ begin
       Put_Line ("Positive toggle   : " & Boolean_Affirmative_Switch.Boolean_Value'Image);
       Put_Line ("Negative toggle   : " & Boolean_Negative_Switch.Boolean_Value'Image);
       
+      New_Line;
+      Put_Line ("Explicitly requesting option values:");
+      
+      Put_Line ("--int: " & Get_Integer_Option_Value ("--int", Options)'Image);
+      
       if File_Indices'Length > 0 then
          New_Line;
          Put_Line ("The following command line arguments are recognised as files:");

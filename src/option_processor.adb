@@ -149,19 +149,27 @@ package body Option_Processor is
                       else Value_Image_Length (Value) - 2);
       end case;
    end;
-   
-   procedure Put (Value : Option_Value_Access) is
+      
+   function Option_Value_As_String (Value : in Option_Value_Type) return String is
    begin
       case Value.Option_Kind is
-         when STRING_OPT    => Put (" '" & Value.String_Value.all & "'");
-         when INTEGER_OPT   => Put (Value.Integer_Value'Image);
-         when FLOAT_OPT     => Put (Value.Float_Value'Image);
-         when DOUBLE_OPT    => Put (Value.Double_Value'Image);
-         when NATURAL_OPT   => Put (Value.Natural_Value'Image);
-         when POSITIVE_OPT  => Put (Value.Positive_Value'Image);
-         when CHARACTER_OPT => Put (Value.Character_Value'Image);
-         when others => null;
+         when STRING_OPT    => return Value.String_Value.all;
+         when INTEGER_OPT   => return Value.Integer_Value'Image;
+         when FLOAT_OPT     => return Value.Float_Value'Image;
+         when DOUBLE_OPT    => return Value.Double_Value'Image;
+         when NATURAL_OPT   => return Value.Natural_Value'Image;
+         when POSITIVE_OPT  => return Value.Positive_Value'Image;
+         when CHARACTER_OPT => return Value.Character_Value'Image;
+         when BOOLEAN_TRUE_OPT | BOOLEAN_FALSE_OPT =>
+            return Value.Boolean_Value'Image;
+         when FUNCTION_OPT | HELP_OPT =>
+            return "";
       end case;
+   end;
+      
+   procedure Put (Value : Option_Value_Access) is
+   begin
+      Put (Option_Value_As_String (Value.all));
    end;
    
    procedure Put_Default_Option_Description (Option : Option_Type) is
@@ -552,4 +560,44 @@ package body Option_Processor is
         );
    end;
    
-end Option_Processor;
+   -- -------------------------------------------------------------------------
+   
+   function Get_Option_Value
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return Option_Value_Type
+   is
+   begin
+      for Opt of Options loop
+         if Opt.Long_Option.all = Option_Name then
+            return Opt.Value.all;
+         end if;
+      end loop;
+      raise UNKNOWN_OPTION with
+        "value requested for unknown option " &
+        "'" & Option_Name & "'";
+   end;
+   
+   function Get_String_Option_Value
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return String is
+   begin
+      return
+        Option_Value_As_String (Get_Option_Value (Option_Name, Options));
+   end;
+   
+   function Get_Integer_Option_Value 
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return Integer
+   is
+   begin
+      return
+        Get_Option_Value (Option_Name, Options).Integer_Value;
+   end;
+   
+   end Option_Processor;

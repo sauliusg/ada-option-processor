@@ -174,4 +174,24 @@ package Option_Processor is
       Leading_Plus_Starts_Short_Option : Boolean := True
      );
    
+   -- ------------------------------------------------------------------------
+   
+   function Get_Option_Value
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return Option_Value_Type;
+      
+   function Get_String_Option_Value
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return String;
+     
+   function Get_Integer_Option_Value 
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return Integer;
+   
 end Option_Processor;
