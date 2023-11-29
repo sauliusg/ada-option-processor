@@ -1,0 +1,44 @@
+This program ('bin/procedural_options') recognises the following options:
+'-' 'h' ' '	HELP_OPT           	Is_Present = FALSE	"--help"
+'-' '1' ' '	FUNCTION_OPT       	Is_Present = FALSE	"--one"
+'-' '2' ' '	FUNCTION_OPT       	Is_Present = FALSE	"--two"
+'-' '3' ' '	FUNCTION_OPT       	Is_Present = FALSE	"--tree"
+'-' 'x' ' '	DOUBLE_OPT         	Is_Present = FALSE	"--xstrange"
+'-' 'i' ' '	INTEGER_OPT        	Is_Present = FALSE	"--int"
+'-' 'f' ' '	FLOAT_OPT          	Is_Present = FALSE	"--float"
+'-' 'b' ' '	BOOLEAN_TRUE_OPT   	Is_Present = FALSE	"--bool"
+'-' 'b' '+'	BOOLEAN_TRUE_OPT   	Is_Present = FALSE	""
+'-' 'b' '-'	BOOLEAN_FALSE_OPT  	Is_Present = FALSE	"--no-bool"
+' ' ' ' ' '	INTEGER_OPT        	Is_Present = FALSE	"--only-long"
+'-' 'q' ' '	BOOLEAN_TRUE_OPT   	Is_Present = FALSE	"--positive"
+'-' 'q' '+'	BOOLEAN_TRUE_OPT   	Is_Present = FALSE	""
+'-' 'q' '-'	BOOLEAN_FALSE_OPT  	Is_Present = FALSE	"--negative"
+'+' 'q' ' '	BOOLEAN_FALSE_OPT  	Is_Present = FALSE	""
+'-' 's' ' '	BOOLEAN_TRUE_OPT   	Is_Present = FALSE	"--affirmative"
+'-' 's' '+'	BOOLEAN_TRUE_OPT   	Is_Present = FALSE	""
+'-' 's' '-'	BOOLEAN_FALSE_OPT  	Is_Present = FALSE	"--no-affirmative"
+'+' 's' ' '	BOOLEAN_FALSE_OPT  	Is_Present = FALSE	""
+
+The following options were processed on the command line:
+
+The following parameter values are current:
+Integer_Parameter :  0
+Float_Parameter   :  0.00000E+00
+Flag              : ONE
+Positive toggle   : TRUE
+Negative toggle   : FALSE
+
+The following command line arguments are recognised as files:
+ 1	 1	"tests/data/m1.mat"
+ 2	 2	"tests/data/m2.mat"
+
+File contents:
+=== "tests/data/m1.mat" ===
+ 1	2 2
+ 2	0 1
+ 3	1 0
+=== "tests/data/m2.mat" ===
+ 1	3 3
+ 2	 1  0  1
+ 3	 0 -1  1
+ 4	 0  1  0

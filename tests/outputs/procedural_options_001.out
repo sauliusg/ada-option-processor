@@ -1,0 +1,21 @@
+This is a help from the main program ...
+OPTIONS:
+  -h , --help                           print a short help message and exit
+  -1 , --one                            toggle the option
+  -2 , --two                            toggle the option
+  -3 , --tree                           toggle the option
+  -x , --xstrange 0.00000000000000E+00  specify a double value
+  -i , --int 0                          specify an integer value
+  -f , --float 0.00000E+00              specify a float value
+  -b , --boolFALSE                      toggle the option
+  -b+, FALSE                            toggle the option
+  -b-, --no-boolFALSE                   toggle the option
+       --only-long 0                    specify an integer value
+  -q , --positiveFALSE                  toggle the option
+  -q+, FALSE                            toggle the option
+  -q-, --negativeFALSE                  toggle the option
+  +q , FALSE                            toggle the option
+  -s , --affirmativeTRUE                toggle the option
+  -s+, TRUE                             toggle the option
+  -s-, --no-affirmativeTRUE             toggle the option
+  +s , TRUE                             toggle the option
