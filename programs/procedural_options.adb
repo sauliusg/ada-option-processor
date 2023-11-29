@@ -171,26 +171,29 @@ begin
       New_Line;
       Put_Line ("File contents:");
       
-      for F in 1 .. File_Name_Count loop
-         declare
-            Input_File : File_Selector.File_Access := Select_File (F);
-            Line_Count : Integer := 0;
-            File_Name : String := Get_File_Name (F);
-         begin
-            Put_Line ("=== """ & File_Name & """ ===");            
-            while not End_Of_File (Input_File.all) loop
-               declare
-                  Line : String := Get_Line (Input_File.all);
-               begin
-                  Line_Count := Line_Count + 1;
-                  Put (Line_Count'Image & ASCII.HT);
-                  Put_Line (Line);
-               end;
-            end loop;
+      declare
+         Input_File : File_Selector.File_Access;
+      begin
+         for F in 1 .. File_Name_Count loop
+            Select_File (F, Input_File);
+            declare
+               Line_Count : Integer := 0;
+               File_Name : String := Get_File_Name (F);
+            begin
+               Put_Line ("=== """ & File_Name & """ ===");            
+               while not End_Of_File (Input_File.all) loop
+                  declare
+                     Line : String := Get_Line (Input_File.all);
+                  begin
+                     Line_Count := Line_Count + 1;
+                     Put (Line_Count'Image & ASCII.HT);
+                     Put_Line (Line);
+                  end;
+               end loop;
+            end;
             Close (Input_File);
-         end;
-      end loop;
-   
+         end loop;
+      end;
    end if;
    
    Free_Options.Free_Options (Options);
