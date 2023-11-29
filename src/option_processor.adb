@@ -600,4 +600,59 @@ package body Option_Processor is
         Get_Option_Value (Option_Name, Options).Integer_Value;
    end;
    
-   end Option_Processor;
+   function Get_Float_Option_Value 
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return Float
+   is
+   begin
+      return
+        Get_Option_Value (Option_Name, Options).Float_Value;
+   end;
+   
+   function Get_Double_Option_Value 
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return Long_Float
+   is
+   begin
+      return
+        Get_Option_Value (Option_Name, Options).Double_Value;
+   end;
+   
+   function Get_Positive_Option_Value 
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return Positive
+   is
+   begin
+      return
+        Get_Option_Value (Option_Name, Options).Positive_Value;
+   end;
+   
+   function Get_Natural_Option_Value 
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return Natural
+   is
+   begin
+      return
+        Get_Option_Value (Option_Name, Options).Natural_Value;
+   end;
+   
+   function Get_Boolean_Option_Value 
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return Boolean
+   is
+   begin
+      return
+        Get_Option_Value (Option_Name, Options).Boolean_Value;
+   end;
+   
+end Option_Processor;

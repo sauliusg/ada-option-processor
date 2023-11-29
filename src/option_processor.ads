@@ -194,4 +194,34 @@ package Option_Processor is
       Options : Option_Array
      ) return Integer;
    
+   function Get_Float_Option_Value 
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return Float;
+   
+   function Get_Double_Option_Value 
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return Long_Float;
+   
+   function Get_Positive_Option_Value 
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return Positive;
+   
+   function Get_Natural_Option_Value 
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return Natural;
+   
+   function Get_Boolean_Option_Value 
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return Boolean;
+   
 end Option_Processor;

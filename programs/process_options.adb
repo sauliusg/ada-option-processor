@@ -72,6 +72,9 @@ procedure Process_Options is
       Option ("-x", "--xstrange",  DOUBLE_OPT),
       Option ("-i", "--int",       Integer_Parameter),
       Option ("-f", "--float",     Float_Parameter),
+      Option ("-d", "--double",    DOUBLE_OPT),
+      Option ("-N", "--natural",   NATURAL_OPT),
+      Option ("-p", "--positive",  POSITIVE_OPT),
       Option ("-b", "--bool",      BOOLEAN_TRUE_OPT),
       Option ("-b+","",            BOOLEAN_TRUE_OPT),
       Option ("-b-","--no-bool",   BOOLEAN_FALSE_OPT),
@@ -168,7 +171,13 @@ begin
       New_Line;
       Put_Line ("Explicitly requesting option values:");
       
-      Put_Line ("--int: " & Get_Integer_Option_Value ("--int", Options)'Image);
+      Put_Line ("--int      : " & Get_Integer_Option_Value ("--int", Options)'Image);      
+      Put_Line ("--float    : " & Get_Float_Option_Value ("--float", Options)'Image);
+      Put_Line ("double     : " & Get_Double_Option_Value ("--xstrange", Options)'Image);
+      Put_Line ("--double   : " & Get_Double_Option_Value ("--double", Options)'Image);
+      Put_Line ("--positive : " & Get_Positive_Option_Value ("--positive", Options)'Image);
+      Put_Line ("--natural  : " & Get_Natural_Option_Value ("--natural", Options)'Image);
+      Put_Line ("--bool     : " & Get_Boolean_Option_Value ("--bool", Options)'Image);
       
       if File_Indices'Length > 0 then
          New_Line;
