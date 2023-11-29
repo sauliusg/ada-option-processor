@@ -29,7 +29,7 @@ package body File_Selector is
       when STORAGE_ERROR =>
          raise STORAGE_ERROR with
            "package 'File_Selector': storage for selected files exhausted -- " &
-           "you should use Free() " &
+           "you should use Close () " &
            "after processing each file returned by Select_File()";
    end;
    
@@ -50,7 +50,7 @@ package body File_Selector is
       when STORAGE_ERROR =>
          raise STORAGE_ERROR with
            "package 'File_Selector': storage for selected files exhausted -- " &
-           "you should use Free() " &
+           "you should use Close () " &
            "after processing each file returned by Select_File()";
    end;
 
