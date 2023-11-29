@@ -279,7 +279,13 @@ package body Option_Processor is
             declare
                Value_String : String := Get_Value_String (Option_Index);
             begin
-               Option.Value.Character_Value := Value_String (Value_String'First);
+               if Value_String'Length > 1 then
+                  raise OPTION_VALUE_TOO_LONG with
+                    "value '" & Value_String & "' too long for character option '" &
+                    Cmd_Option & "'";
+               else
+                  Option.Value.Character_Value := Value_String (Value_String'First);
+               end if;
             end;
          when BOOLEAN_TRUE_OPT =>
             Option.Value.Boolean_Value := True;

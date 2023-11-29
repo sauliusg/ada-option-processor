@@ -8,6 +8,7 @@ package Option_Processor is
    UNKNOWN_OPTION : exception;
    AMBIGUOUS_OPTION : exception;
    MISSING_OPTION_ARGUMENT : exception;
+   OPTION_VALUE_TOO_LONG : exception;
    
    HELP_PRINTED : exception;
    
