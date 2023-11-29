@@ -206,17 +206,23 @@ package Option_Processor is
       Options : Option_Array
      ) return Long_Float;
    
+   function Get_Natural_Option_Value 
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return Natural;
+   
    function Get_Positive_Option_Value 
      (
       Option_Name : String;
       Options : Option_Array
      ) return Positive;
    
-   function Get_Natural_Option_Value 
+   function Get_Character_Option_Value 
      (
       Option_Name : String;
       Options : Option_Array
-     ) return Natural;
+     ) return Character;
    
    function Get_Boolean_Option_Value 
      (

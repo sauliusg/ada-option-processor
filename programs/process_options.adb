@@ -79,6 +79,7 @@ procedure Process_Options is
       Option ("-b+","",            BOOLEAN_TRUE_OPT),
       Option ("-b-","--no-bool",   BOOLEAN_FALSE_OPT),
       Option ("",   "--only-long", INTEGER_OPT),
+      Option ("-c", "--char",      CHARACTER_OPT),
       
       Option ("-q ","--positive",  BOOLEAN_TRUE_OPT,  Boolean_Negative_Switch),
       Option ("-q+","",            BOOLEAN_TRUE_OPT,  Boolean_Negative_Switch),
@@ -106,7 +107,9 @@ procedure Process_Options is
             Put (Option.Value.Natural_Value'Image);
          when POSITIVE_OPT =>
             Put (Option.Value.Positive_Value'Image);
-         when BOOLEAN_FALSE_OPT | BOOLEAN_TRUE_OPT =>
+         when CHARACTER_OPT =>
+            Put (Option.Value.Character_Value'Image);
+         when BOOLEAN_TRUE_OPT | BOOLEAN_FALSE_OPT =>
             Put (Option.Value.Boolean_Value'Image);
          when FUNCTION_OPT =>
             Put (Option.Value.Process'Image & " called");
@@ -115,7 +118,7 @@ procedure Process_Options is
          when others =>
             raise UNKNOWN_OPTION with
               "INTERNAL ERROR -- unknown option kind '" &
-              Option.Option_Kind'Image & "' for option " &
+              Option.Option_Kind'Image & "' for option '" &
               Option.Long_Option.all & "' in Put_Option_Value";
       end case;
    end;
@@ -178,6 +181,7 @@ begin
       Put_Line ("--positive : " & Get_Positive_Option_Value ("--positive", Options)'Image);
       Put_Line ("--natural  : " & Get_Natural_Option_Value ("--natural", Options)'Image);
       Put_Line ("--bool     : " & Get_Boolean_Option_Value ("--bool", Options)'Image);
+      Put_Line ("--char     : " & Get_Character_Option_Value ("--char", Options)'Image);
       
       if File_Indices'Length > 0 then
          New_Line;

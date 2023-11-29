@@ -621,6 +621,17 @@ package body Option_Processor is
         Get_Option_Value (Option_Name, Options).Double_Value;
    end;
    
+   function Get_Natural_Option_Value 
+     (
+      Option_Name : String;
+      Options : Option_Array
+     ) return Natural
+   is
+   begin
+      return
+        Get_Option_Value (Option_Name, Options).Natural_Value;
+   end;
+   
    function Get_Positive_Option_Value 
      (
       Option_Name : String;
@@ -632,15 +643,15 @@ package body Option_Processor is
         Get_Option_Value (Option_Name, Options).Positive_Value;
    end;
    
-   function Get_Natural_Option_Value 
+   function Get_Character_Option_Value 
      (
       Option_Name : String;
       Options : Option_Array
-     ) return Natural
+     ) return Character
    is
    begin
       return
-        Get_Option_Value (Option_Name, Options).Natural_Value;
+        Get_Option_Value (Option_Name, Options).Character_Value;
    end;
    
    function Get_Boolean_Option_Value 
