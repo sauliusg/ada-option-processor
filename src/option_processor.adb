@@ -276,7 +276,11 @@ package body Option_Processor is
          when POSITIVE_OPT =>
             Option.Value.Positive_Value := Positive'Value (Get_Value_String (Option_Index));
          when CHARACTER_OPT =>
-            Option.Value.Character_Value := Get_Value_String (Option_Index)(1);
+            declare
+               Value_String : String := Get_Value_String (Option_Index);
+            begin
+               Option.Value.Character_Value := Value_String (Value_String'First);
+            end;
          when BOOLEAN_TRUE_OPT =>
             Option.Value.Boolean_Value := True;
          when BOOLEAN_FALSE_OPT =>
