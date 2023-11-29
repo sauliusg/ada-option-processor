@@ -394,25 +394,24 @@ package body Option_Processor is
                if Index (Options (I).Long_Option.all, Option_Only) = 1 then
                   Found_Instance_Count := Found_Instance_Count + 1;
                   Found_Instances (Found_Instance_Count) := I;
-                  if Found_Instance_Count = 1 then
-                     Process_Option
-                       (
-                        Option_Only,
-                        Option_Index,
-                        Options (I),
-                        Options
-                       );
-                  end if;
                end if;
             end loop;
-            if Found_Instance_Count > 1 then
+            if Found_Instance_Count = 1 then
+               Process_Option
+                 (
+                  Option_Only,
+                  Option_Index,
+                  Options (Found_Instances (1)),
+                  Options
+                 );
+            elsif Found_Instance_Count > 1 then
                raise AMBIGUOUS_OPTION with
                  "Option '" & Option_Only & "' is not unique; possible candidates are: " &
                  Concatenate_Options (Found_Instance_Count, Found_Instances, Options);
             elsif Found_Instance_Count = 0 then
                raise UNKNOWN_OPTION with
                  "unknown long option '" & Option_Only & "'";
-         end if;
+            end if;
          end;
       end if;
    end;
