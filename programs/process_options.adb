@@ -94,33 +94,7 @@ procedure Process_Options is
    
    procedure Put_Option_Value (Option : Option_Type) is
    begin
-      case Option.Option_Kind is
-         when STRING_OPT =>
-            Put ("'" & Option.Value.String_Value.all & "'");
-         when INTEGER_OPT =>
-            Put (Option.Value.Integer_Value'Image);
-         when FLOAT_OPT =>
-            Put (Option.Value.Float_Value'Image);
-         when DOUBLE_OPT =>
-            Put (Option.Value.Double_Value'Image);
-         when NATURAL_OPT =>
-            Put (Option.Value.Natural_Value'Image);
-         when POSITIVE_OPT =>
-            Put (Option.Value.Positive_Value'Image);
-         when CHARACTER_OPT =>
-            Put (Option.Value.Character_Value'Image);
-         when BOOLEAN_TRUE_OPT | BOOLEAN_FALSE_OPT =>
-            Put (Option.Value.Boolean_Value'Image);
-         when FUNCTION_OPT =>
-            Put (Option.Value.Process'Image & " called");
-         when HELP_OPT =>
-            Put (Option.Value.Process'Image & " as help printer");
-         when others =>
-            raise UNKNOWN_OPTION with
-              "INTERNAL ERROR -- unknown option kind '" &
-              Option.Option_Kind'Image & "' for option '" &
-              Option.Long_Option.all & "' in Put_Option_Value";
-      end case;
+      Option_Processor.Put (Option.Value);
    end;
    
 begin

@@ -152,7 +152,11 @@ package Option_Processor is
       Tread_Double_Dash_As_End_Of_Options : Boolean := True;
       Leading_Plus_Starts_Short_Option : Boolean := True
      ) return File_Index_Array;
-
+   
+   function Option_Value_As_String (Value : in Option_Value_Type) return String;
+   
+   procedure Put (Value : Option_Value_Access);
+   
    -- ------------------------------------------------------------------------
    
    function File_Name_Count return Natural;
