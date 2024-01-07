@@ -1,8 +1,8 @@
 This program ('bin/procedural_options') recognises the following options:
 '-' 'h' ' '	HELP_OPT           	Is_Present = FALSE	"--help"
-'-' '1' ' '	FUNCTION_OPT       	Is_Present = FALSE	"--one"
-'-' '2' ' '	FUNCTION_OPT       	Is_Present = FALSE	"--two"
-'-' '3' ' '	FUNCTION_OPT       	Is_Present = FALSE	"--tree"
+'-' '1' ' '	FLAG_OPT           	Is_Present = FALSE	"--one"
+'-' '2' ' '	FLAG_OPT           	Is_Present = FALSE	"--two"
+'-' '3' ' '	FLAG_OPT           	Is_Present = FALSE	"--tree"
 '-' 'x' ' '	DOUBLE_OPT         	Is_Present = FALSE	"--xstrange"
 '-' 'i' ' '	INTEGER_OPT        	Is_Present = FALSE	"--int"
 '-' 'f' ' '	FLOAT_OPT          	Is_Present = FALSE	"--float"

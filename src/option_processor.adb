@@ -77,32 +77,9 @@ package body Option_Processor is
         );
    end;
    
-   function Option
-     (
-      Short_Option, Long_Option : String;
-      Processor : access procedure
-        (Option_String : String; Position : in out Positive);
-      Help : String := ""
-     ) return Option_Type is
-   begin
-      return Option
-        (
-         Short_Option, Long_Option,
-         FUNCTION_OPT,
-         new Option_Value_Type'
-           (
-            Option_Kind => FUNCTION_OPT,
-            Process => Processor
-           ),
-         Help
-        );
-   end;
-   
    function Help_Option
      (
       Short_Option, Long_Option : String;
-      Processor : access procedure
-        (Option_String : String; Position : in out Positive) := null;
       Help : String := ""
      ) return Option_Type is
    begin
@@ -110,11 +87,7 @@ package body Option_Processor is
         (
          Short_Option, Long_Option,
          HELP_OPT,
-         new Option_Value_Type'
-           (
-            Option_Kind => FUNCTION_OPT,
-            Process => Processor
-           ),
+         new Option_Value_Type (HELP_OPT),
          Help
         );
    end;
@@ -160,16 +133,19 @@ package body Option_Processor is
          when NATURAL_OPT   => return Value.Natural_Value'Image;
          when POSITIVE_OPT  => return Value.Positive_Value'Image;
          when CHARACTER_OPT => return Value.Character_Value'Image;
+         when FLAG_OPT      => return Value.Flag_Value.all;
          when BOOLEAN_TRUE_OPT | BOOLEAN_FALSE_OPT =>
             return Value.Boolean_Value'Image;
-         when FUNCTION_OPT | HELP_OPT =>
+         when HELP_OPT =>
             return "";
       end case;
    end;
       
    procedure Put (Value : Option_Value_Access) is
    begin
-      Put (Option_Value_As_String (Value.all));
+      if Value.Option_Kind /= FLAG_OPT then
+         Put (Option_Value_As_String (Value.all));
+      end if;
    end;
    
    procedure Put_Default_Option_Description (Option : Option_Type) is
@@ -258,7 +234,8 @@ package body Option_Processor is
       Cmd_Option : String;
       Option_Index : in out Integer;
       Option : in out Option_Type;
-      Options : in Option_Array
+      Options : in Option_Array;
+      Help_Printer : access procedure
      ) is
    begin
       case Option.Option_Kind is
@@ -291,11 +268,12 @@ package body Option_Processor is
             Option.Value.Boolean_Value := True;
          when BOOLEAN_FALSE_OPT =>
             Option.Value.Boolean_Value := False;
-         when FUNCTION_OPT =>
-            Option.Value.Process (Option.Long_Option.all, Option_Index);
+         when FLAG_OPT =>
+            Free (Option.Value.Flag_Value);
+            Option.Value.Flag_Value := new String'(Cmd_Option);
          when HELP_OPT =>
-            if Option.Value.Process /= null then
-               Option.Value.Process (Option.Long_Option.all, Option_Index);
+            if Help_Printer /= null then
+               Help_Printer.all;
             end if;
             Put_Option_Help (Options);
             raise HELP_PRINTED;
@@ -353,7 +331,8 @@ package body Option_Processor is
      (
       Option_String : String;
       Option_Index : in out Positive;
-      Options : in out Option_Array
+      Options : in out Option_Array;
+      Help_Printer : access procedure
      )
    is
       Found_Instance_Count : Integer := 0;
@@ -383,7 +362,8 @@ package body Option_Processor is
                      Option_String,
                      Option_Index,
                      Options (I),
-                     Options
+                     Options,
+                     Help_Printer
                     );
                   return;
                end if;
@@ -412,7 +392,8 @@ package body Option_Processor is
                   Option_Only,
                   Option_Index,
                   Options (Found_Instances (1)),
-                  Options
+                  Options,
+                  Help_Printer
                  );
             elsif Found_Instance_Count > 1 then
                raise AMBIGUOUS_OPTION with
@@ -426,7 +407,11 @@ package body Option_Processor is
       end if;
    end;
    
-   function Get_Options (Options : in out Option_Array) return File_Index_Array
+   function Get_Options
+     (
+      Options : in out Option_Array;
+      Help_Printer : access procedure := null
+     ) return File_Index_Array
    is
       Index : Positive := 1;
       Files : File_Index_Array (1 .. Argument_Count + 1) := (others => 0);
@@ -448,7 +433,7 @@ package body Option_Processor is
                  Option_String = "--" then
                   No_More_Options := True;
                else
-                  Get_Option (Option_String, Argument_Idx, Options);
+                  Get_Option (Option_String, Argument_Idx, Options, Help_Printer);
                end if;
             else
                N_Files := N_Files + 1;
@@ -475,7 +460,8 @@ package body Option_Processor is
       Read_STDIN_If_No_Files : Boolean;
       Treat_Single_Dash_As_STDIN : Boolean := True;
       Tread_Double_Dash_As_End_Of_Options : Boolean := True;
-      Leading_Plus_Starts_Short_Option : Boolean := True
+      Leading_Plus_Starts_Short_Option : Boolean := True;
+      Help_Printer : access procedure := null
      ) return File_Index_Array
    is
       Old_Package_Configuration : Configuration_Type := Package_Configuration;
@@ -486,7 +472,7 @@ package body Option_Processor is
       Package_Configuration.Leading_Plus_Starts_Short_Option := Leading_Plus_Starts_Short_Option;
 
       declare
-         File_Indices : File_Index_Array := Get_Options (Options);
+         File_Indices : File_Index_Array := Get_Options (Options, Help_Printer);
       begin
          Package_Configuration := Old_Package_Configuration;
          return File_Indices;
@@ -540,10 +526,14 @@ package body Option_Processor is
       end if;
    end;
    
-   procedure Process_Options (Options : in out Option_Array) is
+   procedure Process_Options
+     (
+      Options : in out Option_Array;
+      Help_Printer : access procedure := null
+     ) is
    begin
       Free (File_Indices);
-      File_Indices := new File_Index_Array'(Get_Options (Options));
+      File_Indices := new File_Index_Array'(Get_Options (Options, Help_Printer));
    end;
    
    procedure Process_Options
@@ -552,7 +542,8 @@ package body Option_Processor is
       Read_STDIN_If_No_Files : Boolean;
       Treat_Single_Dash_As_STDIN : Boolean := True;
       Tread_Double_Dash_As_End_Of_Options : Boolean := True;
-      Leading_Plus_Starts_Short_Option : Boolean := True
+      Leading_Plus_Starts_Short_Option : Boolean := True;
+      Help_Printer : access procedure := null
      ) is
    begin
       Free (File_Indices);
@@ -564,7 +555,8 @@ package body Option_Processor is
             Read_STDIN_If_No_Files,
             Treat_Single_Dash_As_STDIN,
             Tread_Double_Dash_As_End_Of_Options,
-            Leading_Plus_Starts_Short_Option
+            Leading_Plus_Starts_Short_Option,
+            Help_Printer
            )
         );
    end;

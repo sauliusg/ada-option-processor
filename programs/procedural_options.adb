@@ -27,7 +27,10 @@ procedure Procedural_Options is
    Boolean_Negative_Switch : Option_Value_Access := 
      new Option_Value_Type (BOOLEAN_FALSE_OPT);
    
-   procedure Help (Option_String : String; Pos : in out Positive) is
+   Flag_Option : Option_Value_Access :=
+     new Option_Value_Type'(FLAG_OPT, new String'("--one"));
+   
+   procedure Help is
    begin
       Put_Line ("This is a help from the main program ...");
    end;
@@ -38,7 +41,7 @@ procedure Procedural_Options is
    
    WRONG_FLAG_OPTION : exception;
    
-   procedure Set_Flag (Option_String : String; Pos : in out Positive) is
+   procedure Set_Flag (Option_String : String) is
    begin
       if Option_String = "--one" then
          Flag := ONE;
@@ -55,10 +58,10 @@ procedure Procedural_Options is
    
    Options : Option_Array :=
      (
-      Help_Option ("-h", "--help", Help'Access),
-      Option ("-1", "--one",       Set_Flag'Access),
-      Option ("-2", "--two",       Set_Flag'Access),
-      Option ("-3", "--tree",      Set_Flag'Access),
+      Help_Option ("-h", "--help"),
+      Option ("-1", "--one",       Flag_Option),
+      Option ("-2", "--two",       Flag_Option),
+      Option ("-3", "--tree",      Flag_Option),
       Option ("-x", "--xstrange",  DOUBLE_OPT),
       Option ("-i", "--int",       Integer_Parameter),
       Option ("-f", "--float",     Float_Parameter),
@@ -95,8 +98,14 @@ procedure Procedural_Options is
             Put (Option.Value.Positive_Value'Image);
          when BOOLEAN_FALSE_OPT | BOOLEAN_TRUE_OPT =>
             Put (Option.Value.Boolean_Value'Image);
-         when FUNCTION_OPT =>
-            Put (Option.Value.Process'Image & " called");
+         when FLAG_OPT =>
+            Put (
+                 Option.Value.Flag_Value
+                   (
+                    Option.Value.Flag_Value'First + 2 .. 
+                    Option.Value.Flag_Value'Last
+                   )
+                );
          when others =>
             raise UNKNOWN_OPTION with
               "INTERNAL ERROR -- unknown option kind '" &
@@ -115,7 +124,9 @@ begin
         );
    end if;
    
-   Process_Options (Options);
+   Process_Options (Options, Help'Access);
+   
+   Set_Flag (Flag_Option.Flag_Value.all);
    
    Put_Line ("This program ('" & Command_Name & "') recognises the following options:");
    for O of Options loop

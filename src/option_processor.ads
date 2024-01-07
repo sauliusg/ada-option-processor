@@ -46,14 +46,11 @@ package Option_Processor is
    type String_Access is access String;
    for String_Access'Storage_Pool use Reclaiming_Pool;
    
-   type Option_Processor_Type is access procedure
-     (Option_String : String; Position : in out Positive);
-
    type Option_Value_Kind is
      (
       STRING_OPT, INTEGER_OPT, FLOAT_OPT, DOUBLE_OPT, NATURAL_OPT,
       POSITIVE_OPT, CHARACTER_OPT, BOOLEAN_TRUE_OPT, BOOLEAN_FALSE_OPT,
-      FUNCTION_OPT, HELP_OPT
+      FLAG_OPT, HELP_OPT
      );
    
    type Option_Value_Type (Option_Kind : Option_Value_Kind := STRING_OPT)
@@ -75,8 +72,10 @@ package Option_Processor is
             Character_Value : Character := ' ';
          when BOOLEAN_TRUE_OPT | BOOLEAN_FALSE_OPT =>
             Boolean_Value : Boolean := False;
-         when FUNCTION_OPT | HELP_OPT =>
-            Process : Option_Processor_Type;
+         when FLAG_OPT =>
+            Flag_Value : Option_Value_String := new String'("");
+         when HELP_OPT =>
+            null;
       end case;
    end record;
    
@@ -122,19 +121,9 @@ package Option_Processor is
       Help : String := ""
      ) return Option_Type;
    
-   function Option
-     (
-      Short_Option, Long_Option : String;
-      Processor : access procedure
-        (Option_String : String; Position : in out Positive);
-      Help : String := ""
-     ) return Option_Type;
-   
    function Help_Option
      (
       Short_Option, Long_Option : String;
-      Processor : access procedure
-        (Option_String : String; Position : in out Positive) := null;
       Help : String := ""
      ) return Option_Type;
 
@@ -143,7 +132,11 @@ package Option_Processor is
    type File_Index_Array_Access is access File_Index_Array;
    for File_Index_Array_Access'Storage_pool use Reclaiming_Pool;
    
-   function Get_Options (Options : in out Option_Array) return File_Index_Array;
+   function Get_Options
+     (
+      Options : in out Option_Array;
+      Help_Printer : access procedure := null
+     ) return File_Index_Array;
    
    function Get_Options
      (
@@ -151,8 +144,11 @@ package Option_Processor is
       Read_STDIN_If_No_Files : Boolean;
       Treat_Single_Dash_As_STDIN : Boolean := True;
       Tread_Double_Dash_As_End_Of_Options : Boolean := True;
-      Leading_Plus_Starts_Short_Option : Boolean := True
+      Leading_Plus_Starts_Short_Option : Boolean := True;
+      Help_Printer : access procedure := null
      ) return File_Index_Array;
+   
+   -- ------------------------------------------------------------------------
    
    function Option_Value_As_String (Value : in Option_Value_Type) return String;
    
@@ -168,7 +164,11 @@ package Option_Processor is
       
    function Get_File_Indices return File_Index_Array;
    
-   procedure Process_Options (Options : in out Option_Array);
+   procedure Process_Options
+     (
+      Options : in out Option_Array;
+      Help_Printer : access procedure := null
+     );
    
    procedure Process_Options
      (
@@ -176,7 +176,8 @@ package Option_Processor is
       Read_STDIN_If_No_Files : Boolean;
       Treat_Single_Dash_As_STDIN : Boolean := True;
       Tread_Double_Dash_As_End_Of_Options : Boolean := True;
-      Leading_Plus_Starts_Short_Option : Boolean := True
+      Leading_Plus_Starts_Short_Option : Boolean := True;
+      Help_Printer : access procedure := null
      );
    
    -- ------------------------------------------------------------------------

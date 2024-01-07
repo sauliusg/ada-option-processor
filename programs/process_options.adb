@@ -36,7 +36,10 @@ procedure Process_Options is
    Boolean_Negative_Switch : Option_Value_Access := 
      new Option_Value_Type (BOOLEAN_FALSE_OPT);
    
-   procedure Help (Option_String : String; Pos : in out Positive) is
+   Option_Selector : Option_Value_Access :=
+     new Option_Value_Type'(FLAG_OPT, new String'("--one"));
+   
+   procedure Help is
    begin
       Put_Line ("This is a help from the main program ...");
    end;
@@ -47,7 +50,7 @@ procedure Process_Options is
    
    WRONG_FLAG_OPTION : exception;
    
-   procedure Set_Flag (Option_String : String; Pos : in out Positive) is
+   procedure Set_Flag (Option_String : String) is
    begin
       if Option_String = "--one" then
          Flag := ONE;
@@ -64,11 +67,11 @@ procedure Process_Options is
    
    Options : Option_Array :=
      (
-      Help_Option ("-h", "--help", Help'Access),
+      Help_Option ("-h", "--help"),
       Option ("-S", "--string",    String_Parameter),
-      Option ("-1", "--one",       Set_Flag'Access, Help => "Set selection to ONE"),
-      Option ("-2", "--two",       Set_Flag'Access, Help => "Set selection to TWO"),
-      Option ("-3", "--tree",      Set_Flag'Access, Help => "Set selection to THREE"),
+      Option ("-1", "--one",       Option_Selector, Help => "Set selection to ONE"),
+      Option ("-2", "--two",       Option_Selector, Help => "Set selection to TWO"),
+      Option ("-3", "--tree",      Option_Selector, Help => "Set selection to THREE"),
       Option ("-x", "--xstrange",  DOUBLE_OPT),
       Option ("-i", "--int",       Integer_Parameter),
       Option ("-f", "--float",     Float_Parameter),
@@ -105,9 +108,12 @@ begin
          Options,
          Read_STDIN_If_No_Files =>
            (if Ada.Directories.Simple_Name (Command_Name) = "process_options_no_stdin"
-              then False else True)
+              then False else True),
+         Help_Printer => Help'Access
         );
    begin
+      
+      Set_Flag (Option_Selector.Flag_Value.all);
       
       Put_Line ("This program ('" & Command_Name & "') recognises the following options:");
       for O of Options loop

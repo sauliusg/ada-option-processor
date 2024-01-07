@@ -59,8 +59,8 @@ ${TEST_DEPENDENCIES}: ${INP_FILES} ${OPT_FILES}
 	for i in $^; do \
 		echo "$$i: $$(echo $$i | sed -e 's/_[0-9]*\..*$$//' \
 			| sed 's,${TEST_DIR},${BIN_DIR},')" \
-			| sed 's,.inp,.diff,' \
-			| sed 's,.opt,.diff,' \
+			| sed 's,\.inp:,.diff:,' \
+			| sed 's,\.opt:,.diff:,' \
 			| sed 's,/cases/,/outputs/,' \
 		; \
 	done | sort | uniq >> $@
